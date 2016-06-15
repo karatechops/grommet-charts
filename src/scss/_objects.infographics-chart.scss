@@ -1,0 +1,27 @@
+.infographics-chart {
+	display: flex;
+
+	.infographics-chart--active {
+		.chart__values g line { opacity: 0.5; }
+	}
+
+	.range-label {
+		.range-label__label-marker {
+			stroke: rgba(0, 0, 0, 0.5);
+  		stroke-width: 1;
+		}
+
+		.range-label__label-text {
+			fill: rgba(0, 0, 0, 0.5);
+		}
+
+		&.range-label--vertical svg {
+			height: 192px;
+			width: 50px;
+		}
+	}
+
+	.chart {
+		flex-grow: 1;
+	}
+}

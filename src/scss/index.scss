@@ -1,0 +1,193 @@
+// (C) Copyright 2014-2015 Hewlett Packard Enterprise Development LP
+
+@import 'grommet/scss/hpe/hpe.defaults';
+@import 'infographics.defaults';
+@import 'grommet/scss/grommet-core/index';
+@import 'grommet/scss/hpe/objects.button-hpe';
+@import 'objects.chart';
+@import 'objects.infographics-chart';
+@import 'objects.axis';
+
+// Demo specific.
+
+.box--full {
+  max-width: 1250px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.tabs-container {
+	width: 100%;
+}
+
+.tabs {
+  border-bottom: none;
+  margin-bottom: 24px;
+  color: #fff;
+
+  .tab__label {
+  	color: rgba(255, 255, 255, 0.6);
+  	padding-bottom: 2px;
+  	border-bottom: 2px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .tab--active .tab__label,
+  .tab--active .tab__link:hover .tab__label {
+  	color: #fff;
+  	border-color: #fff;
+  }
+
+  .tab:hover .tab__label {
+    border-color: #fff;
+	}
+}
+
+.headline {
+	max-width: 980px;
+	margin: 0 auto;
+	padding: 30px 0;
+}
+
+.heading {
+	padding: 30px 0;
+}
+
+.stacked-chart {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: stretch;
+  flex-flow: row wrap;
+
+  .chart {
+  	flex-grow: 1;
+		text-align: center;
+		padding: 0 5px;
+
+		.chart__values-point {
+			display: none;
+		}
+  }
+}
+
+.chart {
+	.chart__xaxis-index--highlight text {
+		fill: #fff;
+	}
+
+	.chart__cursor {
+		opacity: 0;
+		transition: opacity 0.3s;
+
+		.chart__cursor-point {
+			stroke-width: 2px;
+			stroke: #425563;
+		}
+	}
+
+	.chart__values {
+		transition: opacity 0.3s;
+
+		.chart__values-point {
+			stroke-width: 2px;
+			fill: nth($brand-neutral-colors, 1);
+		}
+	}
+}
+
+.chart--area:hover {
+	.chart__cursor {
+		opacity: 1;
+	}
+
+	.chart__values { opacity: 0.7; }
+}
+
+.legend {
+	width: 100%;
+
+	.legend__item {
+		text-align: center;
+		margin: 0 auto;
+	}
+
+	.chart__legend--after {
+		display: inline;
+		text-align: center;
+	}
+
+	.legend__item-value {
+		color: #fff;
+	}
+}
+
+.infographics-chart {
+	display: flex;
+	justify-content: center;
+
+	.axis {
+		.axis__label-marker {
+			stroke: nth($brand-light-colors, 2);
+		}
+
+		.axis__label-text {
+			fill: nth($brand-light-colors, 2);
+		}
+
+		&.axis--vertical svg {
+			height: 192px;
+			width: 50px;
+		}
+	}
+
+	.chart {
+		flex-grow: 1;
+	}
+}
+
+.first-digital-natives {
+
+	.chart {
+		flex-grow: 0;
+		@media(min-width: 45em) { min-width: 375px; }
+	}
+
+	.chart__graphic {
+    transform-origin: center center;
+		transform: rotate(90deg);
+		height: 270px;
+	}
+
+	.axis--vertical {
+		display: none;
+	}
+
+	@media(min-width: 45em) {
+		.chart__graphic {
+	    transform-origin: center center;
+  		transform: rotate(0deg);
+  		height: 192px;
+		}
+
+		.axis--vertical {
+			display: block;
+		}
+
+		.axis--horizontal {
+			display: none;
+		}
+	}
+}
+
+// Range label classes to be parsed
+.axis--vertical svg {
+	height: 192px;
+	width: 50px;
+}
+
+.axis--horizontal svg {
+	height: 192px;
+	width: 50px;
+}

@@ -1,0 +1,123 @@
+@include keyframes(reveal-chart) {
+  0% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+.chart--small {
+  .chart__graphic {
+    height: $graphic-small-size;
+  }
+}
+
+.chart--large {
+  .chart__graphic {
+    height: $graphic-large-size;
+  }
+}
+
+.chart {
+	text-align: left;
+
+  &.chart--horizontal {
+    &.chart--small {
+      .chart__graphic {
+        height:  $graphic-small-size;
+        width: auto;
+      }
+    }
+
+    &.chart--large {
+      .chart__graphic {
+        height: $graphic-large-size;
+        width: auto;
+      }
+    }
+
+    .chart__graphic {
+      height: 192px; // find this variable.
+      width: auto;
+    }
+  }
+
+  &.chart--vertical {
+    &.chart--small.chart__graphic {
+      height: auto;
+      width: auto;
+      max-width: $graphic-small-size;
+      max-height: 350px;
+    }
+
+    &.chart--large.chart__graphic {
+      height: auto;
+      width: auto;
+      max-width: $graphic-large-size;
+      max-height: 450px;
+    }
+
+    .chart__graphic {
+      height: auto;
+      width: 192px; // find this variable.
+      min-height: 192px; // resolve sizing conventions.
+    }
+  }
+
+  .chart__values-bar {
+    @include graph-stroke-color;
+  }
+
+  .chart__values-area {
+    @include graph-fill-color;
+
+    &--active {
+      cursor: pointer;
+    }
+  }
+}
+
+.chart__stack {
+	.chart { width: 33%; }
+}
+
+.chart__values {
+
+  @include media-query(lap-and-up) {
+    g {
+    	transform-origin: bottom;
+      @include animation('reveal-chart 2s');
+    }
+  }
+}
+
+.chart__values-line {
+	stroke-width: 1px;
+}
+
+.chart__cursor {
+  stroke: rgba(255, 255, 255, 0.7);
+  stroke-width: 1;
+}
+
+.chart__label-marker {
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 1;
+}
+
+.chart__values-bar {
+	stroke-width: 12px;
+	transition: stroke-width 0.3s;
+
+	&.chart__values-bar--highlight {
+		stroke-width: 18px;
+	}
+}
+
+.chart__values-point {
+  stroke-width: 1px;
+}

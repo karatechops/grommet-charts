@@ -1,0 +1,17 @@
+.axis {
+	padding: 10px;
+
+	.axis__label-marker {
+		stroke: rgba(255, 255, 255, 0.5);
+		stroke-width: 1;
+	}
+
+	.axis__label-text {
+		fill: rgba(255, 255, 255, 0.5);
+	}
+
+	&.axis--vertical svg {
+		height: 192px;
+		width: 50px;
+	}
+}
