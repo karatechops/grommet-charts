@@ -19,6 +19,10 @@ export default function VerticalLineChart () {
               label: "first",
               values: [2, 3, 2, 3, 1, 3, 4],
               colorIndex: "graph-2"
+            },{
+              label: "first",
+              values: [1, 2, 3, 2, 0, 2, 1],
+              colorIndex: "graph-3"
             }]}
             points={false}
             labelMarkers={false}
@@ -40,7 +44,11 @@ export default function VerticalLineChart () {
             label: "first",
             values: [2, 3, 2, 3, 1, 3, 4],
             colorIndex: "graph-2"
-          }]}
+          },{
+              label: "first",
+              values: [1, 2, 3, 2, 0, 2, 1],
+              colorIndex: "graph-3"
+            }]}
           points={false}
           labelMarkers={false}
           type="area"

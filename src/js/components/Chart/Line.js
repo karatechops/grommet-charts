@@ -3,6 +3,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import Intl from 'grommet/utils/Intl';
+import classnames from 'classnames';
 //import KeyboardAccelerators from 'grommet/utils/KeyboardAccelerators';
 
 const CLASS_ROOT = "chart";
@@ -89,43 +90,43 @@ export default class Line extends Component {
     this._resizeTimer = setTimeout(this._layout, 50);
   }
 
+  _combineSeries(arrays) {
+    let combinedArray = [];
+    arrays.forEach((array) => {
+      combinedArray = combinedArray.concat(array.values);
+    });
+    return combinedArray;
+  }
+
+  // Evaluate series array to determine highest value
+  _getMaxValue(series) {
+    let maxValue = Math.max.apply(Math, this._combineSeries(series));
+    return maxValue;
+  }
+
+  _getMaxCount(series) {
+    let maxCount = 0;
+    series.forEach((item) =>{
+      maxCount = Math.max(item.values.length, maxCount);
+    })
+    maxCount = maxCount - 1;
+
+    return maxCount;
+  }
+
+  _getMinValue() {
+
+  }
+
   // Performs some initial calculations to make subsequent calculations easier.
   _bounds (series, width, height) {
-
     // analyze series data
-    let minX = null;
-    let maxX = null;
-    let minY = null;
-    let maxY = null;
-
-    series.forEach((item) => {
-
-      maxY = (this.props.orientation === 'vertical') 
-        ? item.values.length : null;
-      maxX = (this.props.orientation === 'horizontal') 
-        ? item.values.length : null;
-
-      item.values.forEach((value, valueIndex) => {
-        let x = (this.props.orientation === 'horizontal') 
-          ? valueIndex : value;
-
-        let y = (this.props.orientation === 'horizontal')
-          ? value : valueIndex;
-
-        if (minX === null) {
-          minX = x;
-          maxX = x;
-          minY = y;
-          maxY = y;
-        } else {
-          minX = Math.min(minX, x);
-          maxX = Math.max(maxX, x);
-          minY = Math.min(minY, y);
-          maxY = Math.max(maxY, y);
-        }
-
-      });
-    });
+    let minX = 0;
+    let maxX = (this.props.orientation === 'horizontal') 
+      ? this._getMaxCount(series) : this._getMaxValue(series);
+    let minY = 0;
+    let maxY = (this.props.orientation === 'horizontal') 
+      ? this._getMaxValue(series) : this._getMaxCount(series);
 
     if (this.props.hasOwnProperty('min')) {
       if (this.props.orientation === 'horizontal') {
@@ -134,11 +135,12 @@ export default class Line extends Component {
         minX = this.props.min;
       }
     }
+
     if (this.props.hasOwnProperty('max')) {
       if (this.props.orientation === 'horizontal') {
         maxY = this.props.max;
       } else if (this.props.orientation === 'vertical') {
-        maxY = this.props.max;
+        maxX = this.props.max;
       }
     }
 
@@ -171,6 +173,12 @@ export default class Line extends Component {
     let scaleY = (graphHeight / spanY);
 
     let result = {
+      graphWidth: graphWidth,
+      graphHeight: graphHeight,
+      graphTop: graphTop,
+      graphBottom: graphBottom,
+      graphLeft: graphLeft,
+      graphRight: graphRight,
       minX: minX,
       maxX: maxX,
       minY: minY,
@@ -179,14 +187,8 @@ export default class Line extends Component {
       spanY: spanY,
       scaleX: scaleX,
       scaleY: scaleY,
-      graphWidth: graphWidth,
-      graphHeight: graphHeight,
-      graphTop: graphTop,
-      graphBottom: graphBottom,
-      graphLeft: graphLeft,
-      graphRight: graphRight,
       stepWidth: stepWidth,
-      maxValues: valueCount
+      valueCount: valueCount
     };
 
     return result;
@@ -243,18 +245,9 @@ export default class Line extends Component {
   // Translates X value to X coordinate.
   _translateX (x) {
     let bounds = this.state.bounds;
-    let scaledX = Math.min(bounds.graphRight, Math.round((x - bounds.minX) * bounds.scaleX));
+    let scaledX = Math.min(bounds.graphRight, this._translateWidth(x));
     let translatedX = Math.max(bounds.graphLeft, scaledX);
-    if (translatedX === 0) {
-      console.log(`------- ${this.props.orientation} -----`);
-      console.log('x', x, 'translatedX', translatedX);
-      console.log('bounds.graphLeft', bounds.graphLeft);
-      console.log('bounds.scaleX', bounds.scaleX);
-      console.log('bounds.minX', bounds.minX, 'bounds.minY', bounds.minY);
-      console.log('min value of:', 'bounds.graphRight', bounds.graphRight, 
-        'Math.round((x - bounds.minX) * bounds.scaleX)', Math.round((x - bounds.minX) * bounds.scaleX));
-      console.log(`------------`);
-    }
+
     return translatedX;
   }
 
@@ -272,18 +265,6 @@ export default class Line extends Component {
     let translatedY = Math.max(1,
       (bounds.graphBottom - Math.max(1, this._translateHeight(y))));
 
-    if (y === 1) {
-      console.log(`------ ${this.props.orientation} ------`);
-      console.log('y', y, 'translatedY', translatedY);
-      console.log('bounds.graphLeft', bounds.graphLeft);
-      console.log('bounds.scaleY', bounds.scaleY);
-      console.log('bounds.minX', bounds.minX, 'bounds.minY', bounds.minY);
-      //console.log('min value of:', 'bounds.graphRight', bounds.graphRight, 
-        //'Math.round((x - bounds.minX) * bounds.scaleX)', Math.round((x - bounds.minX) * bounds.scaleX));
-      console.log(`------------`);
-    }
-
-    //console.log('translatedY', translatedY);
     return translatedY;
   }
 
@@ -360,8 +341,6 @@ export default class Line extends Component {
 
       // Get all coordinates up front so they are available
       // if we are drawing a smooth chart.
-      if (this.props.orientation === 'vertical') item.values = item.values.reverse();
-
       let coordinates = item.values.map((value, index) => {
         return this._coordinates(value, index, this.props.orientation);
       });
@@ -382,7 +361,6 @@ export default class Line extends Component {
 
         // Lower top most coordinates to accommodate points.
         if (this.props.points && coordinate[1] <= 1) coordinate[1] = coordinate[1] + POINT_RADIUS;
-        //console.log(coordinate);
         if (0 === index) {
           commands = "M" + coordinate.join(',');
         } else {
@@ -528,31 +506,16 @@ export default class Line extends Component {
   }
 
   render () {
-    let classes = [CLASS_ROOT];
-    classes.push(`${CLASS_ROOT}--${this.props.type}`);
-    classes.push(`${CLASS_ROOT}--${this.props.orientation}`);
-    if (this.state.size) {
-      classes.push(`${CLASS_ROOT}--${this.state.size}`);
-    }
+    let classes = classnames([
+      CLASS_ROOT,
+      `${CLASS_ROOT}--${this.props.orientation}`,
+      `${CLASS_ROOT}--${this.props.type}`,
+      {
+        [`${CLASS_ROOT}--${this.state.size}`]: this.state.size
+      }
+    ]);
 
-    let values = [];
-    if ('line' === this.props.type || 'area' === this.props.type) {
-      values = this._renderLinesOrAreas();
-    }
-
-    if (values.length === 0) {
-      classes.push(`${CLASS_ROOT}--loading`);
-      let valueClasses = [`${CLASS_ROOT}__values`];
-      valueClasses.push(`${CLASS_ROOT}__values--loading`);
-      valueClasses.push("color-index-loading");
-      let commands = "M0," + (this.state.height / 2) +
-        " L" + this.state.width + "," + (this.state.height / 2);
-      values.push(
-        <g key="loading">
-          <path stroke="none" className={valueClasses.join(' ')} d={commands} />
-        </g>
-      );
-    }
+    let values = this._renderLinesOrAreas();
 
     let frontBands;
     let activeDescendant;
@@ -579,7 +542,7 @@ export default class Line extends Component {
     let viewBox = `0 0 ${this.state.width} ${this.state.height}`;
 
     return (
-      <div className={classes.join(' ')}>
+      <div className={classes}>
         <svg ref="chart" className={`${CLASS_ROOT}__graphic`}
           viewBox={viewBox}
           preserveAspectRatio="none" role={role} tabIndex="0" 
