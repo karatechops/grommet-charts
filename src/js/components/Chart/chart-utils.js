@@ -332,7 +332,7 @@ export default {
         ? bounds.graphHeight : bounds.stepWidth;
 
       let values = item.values.map((value, valueIndex) => {
-        let y = this._translateY(valueIndex, bounds) - (bounds.stepWidth / 2);;
+        let y = this._translateY(valueIndex, bounds) - (bounds.stepWidth / 2);
         let hotspotId = `${a11yTitleId}_x_band_${valueIndex}`;
         let hotspotTitleId = `${a11yTitleId}_x_band_title_${valueIndex}`;
         let dataValue = value;
