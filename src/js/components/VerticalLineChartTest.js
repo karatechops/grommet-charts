@@ -1,60 +1,78 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Box from 'grommet/components/Box';
 import Line from './Chart/Line';
 import Axis from './Axis';
 
-export default function VerticalLineChart () {
-  return (
-    <div>
-      <Box align="center" justify="center" direction="column">
-        <Axis label = {[
-            {position: 5, value: '100'},
-            {position: 3, value: '50'}]}
-            layout="horizontal"
-            height={50}
-            width={192} />
-        <Box direction="column">
-          <Line series={[
-            {
-              label: "first",
-              values: [2, 3, 2, 3, 1, 3, 4],
-              colorIndex: "graph-2"
-            },{
-              label: "first",
-              values: [1, 2, 3, 2, 0, 2, 1],
-              colorIndex: "graph-3"
-            }]}
-            points={false}
-            labelMarkers={false}
-            type="area"
-            orientation="vertical"
-            a11yTitleId="areaClickableChartTitle" a11yDescId="areaClickableChartDesc" />
+export default class VerticalLineChart extends Component {
+  constructor() {
+    super();
+
+    this._onClick = this._onClick.bind(this);
+    this._onMouseOver = this._onMouseOver.bind(this);
+
+    this.state = {
+      legend: {
+        value: 0,
+        axisValue: 0,
+        units: ''
+      }
+    };
+  }
+
+  _onClick(event) {
+    this.setState({
+      legend: {
+        value: event.target.getAttribute('data-value'),
+        axisValue: event.target.getAttribute('data-axis-value'),
+        units: event.target.getAttribute('data-units')
+      }
+    });
+  }
+
+  _onMouseOver(event) {
+    this.setState({
+      legend: {
+        value: event.target.getAttribute('data-value'),
+        axisValue: event.target.getAttribute('data-axis-value'),
+        units: event.target.getAttribute('data-units')
+      }
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <Box align="center" justify="center" direction="row">
+          <Box align="center" justify="center" direction="column">
+            <p>Millennials<br/>
+              {this.state.legend.axisValue}<br/>
+              {this.state.legend.value} {this.state.legend.units}</p>
+          </Box>
+          <Axis label = {[
+              {position: 5, value: '15'},
+              {position: 1, value: '35'}]}
+              layout="vertical"
+              height={192}
+              width={50} />
+          <Box direction="column">
+            <Line series={[
+              {
+                label: "first",
+                values: [2, 3, 2, 3, 1, 3, 4],
+                units: "m",
+                axisValues: [15, 16 , 17, 18, 19, 20, 21],
+                colorIndex: "graph-3",
+                axisValuesUnits: "years old"
+              }]}
+              points={false}
+              orientation="vertical"
+              size="large"
+              onClick={this._onClick}
+              onMouseOver={this._onMouseOver}
+              a11yTitleId="areaClickableChartTitle" a11yDescId="areaClickableChartDesc" />
+          </Box>
         </Box>
-      </Box>
-
-      <Box align="center" justify="center" direction="row">
-        <Axis label = {[
-            {position: 5, value: '100'},
-            {position: 3, value: '50'}]}
-            layout="vertical"
-            height={192} />
-
-        <Line series={[
-          {
-            label: "first",
-            values: [2, 3, 2, 3, 1, 3, 4],
-            colorIndex: "graph-2"
-          },{
-              label: "first",
-              values: [1, 2, 3, 2, 0, 2, 1],
-              colorIndex: "graph-3"
-            }]}
-          points={false}
-          labelMarkers={false}
-          type="area"
-          orientation="horizontal"
-          a11yTitleId="areaClickableChartTitle" a11yDescId="areaClickableChartDesc" />
-      </Box>
-    </div>
-  );
+      </div>
+    );
+  }
 }
