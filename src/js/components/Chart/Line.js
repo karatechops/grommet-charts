@@ -133,20 +133,8 @@ export default class Line extends Component {
       ? utils.getPointPaths(this.state.bounds, this.props, POINT_RADIUS)
       : null;
 
-    // Testing circle hotspots over points.
-    // This may work for single series charts.
-    // Todo: finish rectangle hotspot.
-    let hotspots = utils.getPointPaths(this.state.bounds, this.props, 10).map((hotspot) => {
-      return hotspot.map((point) => {
-        return React.cloneElement(point, {
-          onClick: this.props.onClick,
-          onMouseOver: this.props.onMouseOver
-        });
-      });
-    });
-    let hotspotGroup = (<g>{hotspots}</g>);
-
-    //let rectangleHotpsots = utils.getHotspots(this.state.bounds, this.props, this.props.a11yTitleId);
+    let rectangleHotspots = utils.getHotspots(this.state.bounds, 
+      this.props, this.props.a11yTitleId, this.props.onClick, this.props.onMouseOver);
 
     let activeDescendant;
     let role = 'img';
@@ -180,7 +168,7 @@ export default class Line extends Component {
           {a11yTitleNode}
           {a11yDescNode}
           <g className={`${CLASS_ROOT}__values`}>{lineGroup}</g>
-          <g className={`${CLASS_ROOT}__hotspots`}>{hotspotGroup}</g>
+          <g className={`${CLASS_ROOT}__hotspots`}>{rectangleHotspots}</g>
         </svg>
       </div>
     );

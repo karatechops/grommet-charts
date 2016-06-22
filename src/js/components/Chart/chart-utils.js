@@ -321,37 +321,34 @@ export default {
   },
 
   // Generate rectangles used for hotspots. Todo ---
-  getHotspots (bounds, {series, valueCount, orientation}, a11yTitleId) {
+  getHotspots (bounds, {series, valueCount, orientation}, a11yTitleId, onClick, onMouseOver) {
     let className = `${CLASS_ROOT}__front`;
-    console.log('bounds',bounds);
-    let hotspots = series.map((obj, index) => {
-      /*let classes = [`${className}-xband`];
-      if (index === this.state.highlightindex) {
-        classes.push(`${className}-xband--highlight`);
-      }
-
-      // For bar charts, the band is left aligned with the bars.
-      let x = this._translateX(obj.value);
-      if ('line' === this.props.type || 'area' === this.props.type) {
-        x -= (bounds.xStepWidth / 2);
-      }*/
+    let hotspots = series.map((item, index) => {
+      // Todo: classes
 
       let width = (orientation === 'horizontal') 
         ? bounds.stepWidth : bounds.graphWidth;
       let height = (orientation === 'horizontal')
         ? bounds.graphHeight : bounds.stepWidth;
 
-      let values = obj.values.map((value, valueIndex) => {
+      let values = item.values.map((value, valueIndex) => {
         let y = this._translateY(valueIndex, bounds) - (bounds.stepWidth / 2);;
         let hotspotId = `${a11yTitleId}_x_band_${valueIndex}`;
         let hotspotTitleId = `${a11yTitleId}_x_band_title_${valueIndex}`;
+        let dataValue = value;
+        let axisValue = (item.axisValues !== undefined) ? item.axisValues[valueIndex] : valueIndex;
+        let units = (item.units !== undefined) ? item.units : '';
+        let axisValuesUnits = (item.axisValuesUnits !== undefined) ? item.axisValuesUnits : '';
 
         return (
           <g key={hotspotId} id={hotspotId} role="tab"
-            aria-labelledby={hotspotTitleId}>
+            aria-labelledby={hotspotTitleId} onClick={onClick}
+            onMouseOver={onMouseOver}>
             <title id={hotspotTitleId}></title>
             <rect role="presentation" className={`${className}-xband-background`}
-              x={0} y={y} width={width} height={height} />
+              x={0} y={y} width={width} height={height}
+              data-value={dataValue} data-units={units}
+              data-axis-value={axisValue} data-axis-units={axisValuesUnits}/>
           </g>
         );
       });

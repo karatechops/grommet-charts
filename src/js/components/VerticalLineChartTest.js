@@ -14,7 +14,8 @@ export default class VerticalLineChart extends Component {
       legend: {
         value: 0,
         axisValue: 0,
-        units: ''
+        units: '',
+        axisUnits: ''
       }
     };
   }
@@ -24,7 +25,8 @@ export default class VerticalLineChart extends Component {
       legend: {
         value: event.target.getAttribute('data-value'),
         axisValue: event.target.getAttribute('data-axis-value'),
-        units: event.target.getAttribute('data-units')
+        units: event.target.getAttribute('data-units'),
+        axisUnits: event.target.getAttribute('data-axis-units')
       }
     });
   }
@@ -34,7 +36,8 @@ export default class VerticalLineChart extends Component {
       legend: {
         value: event.target.getAttribute('data-value'),
         axisValue: event.target.getAttribute('data-axis-value'),
-        units: event.target.getAttribute('data-units')
+        units: event.target.getAttribute('data-units'),
+        axisUnits: event.target.getAttribute('data-axis-units')
       }
     });
   }
@@ -44,9 +47,11 @@ export default class VerticalLineChart extends Component {
       <div>
         <Box align="center" justify="center" direction="row">
           <Box align="center" justify="center" direction="column">
-            <p>Millennials<br/>
-              {this.state.legend.axisValue}<br/>
-              {this.state.legend.value} {this.state.legend.units}</p>
+            <p>
+              Millennials <br/>
+              {this.state.legend.axisValue} {this.state.legend.axisUnits} <br/>
+              {this.state.legend.value}{this.state.legend.units}
+            </p>
           </Box>
           <Axis label = {[
               {position: 5, value: '15'},
@@ -57,7 +62,7 @@ export default class VerticalLineChart extends Component {
           <Box direction="column">
             <Line series={[
               {
-                label: "first",
+                label: "Millennials",
                 values: [2, 3, 2, 3, 1, 3, 4],
                 units: "m",
                 axisValues: [15, 16 , 17, 18, 19, 20, 21],
