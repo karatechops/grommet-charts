@@ -1,4 +1,4 @@
-@include keyframes(reveal-chart) {
+@include keyframes(reveal-chart-horizontal) {
   0% {
     opacity: 0;
     transform: scaleY(0);
@@ -10,69 +10,162 @@
   }
 }
 
-.chart--small {
-  .chart__graphic {
+@include keyframes(reveal-chart-vertical) {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@include keyframes(reveal-cursor-horizontal) {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Naming this infographic chart instead
+// of chart to avoid naming conflict.
+
+.infographic-chart__cursor {
+  stroke: rgba(255, 255, 255, 1);
+  stroke-width: 1;
+  opacity: 0;
+  transition: all 0.25s ease-out;
+
+  .infographic-chart__cursor-point {
+    stroke-width: 2px;
+    stroke: #425563;
+    @include graph-fill-color;
+  }
+}
+
+.infographic-chart--small {
+  .infographic-chart__graphic {
     height: $graphic-small-size;
   }
 }
 
-.chart--large {
-  .chart__graphic {
+.infographic-chart--large {
+  .infographic-chart__graphic {
     height: $graphic-large-size;
   }
 }
 
-.chart {
+.infographic-chart {
 	text-align: left;
 
-  &.chart--horizontal {
-    &.chart--small {
-      .chart__graphic {
+  // Allow points to overflow chart bounds.
+  .infographic-chart__graphic { overflow: visible; }
+
+  &.infographic-chart--horizontal {
+    &.infographic-chart--small {
+      .infographic-chart__graphic {
         height:  $graphic-small-size;
+        max-height: 192px;
         width: auto;
       }
     }
 
-    &.chart--large {
-      .chart__graphic {
+    &.infographic-chart--large {
+      .infographic-chart__graphic {
         height: $graphic-large-size;
+        max-height: 192px;
         width: auto;
       }
     }
 
-    .chart__graphic {
+    .infographic-chart__graphic {
       height: 192px; // find this variable.
+      max-height: 192px;
       width: auto;
+      min-width: 310px;
+    }
+
+    .infographic-chart__values {
+     g {
+        transform-origin: bottom;
+        @include animation('reveal-chart-horizontal 2s');
+      }
+    }
+
+    .infographic-chart__cursor {
+      transform: translateY(10px);
+    }
+
+    &.infographic-chart--active {
+      .infographic-chart__cursor {
+        transform: translateY(0);
+      }
     }
   }
 
-  &.chart--vertical {
-    &.chart--small.chart__graphic {
+  &.infographic-chart--vertical {
+    &.infographic-chart--small.infographic-chart__graphic {
       height: auto;
       width: auto;
       max-width: $graphic-small-size;
       max-height: 350px;
     }
 
-    &.chart--large.chart__graphic {
+    &.infographic-chart--large.infographic-chart__graphic {
       height: auto;
       width: auto;
       max-width: $graphic-large-size;
       max-height: 450px;
     }
 
-    .chart__graphic {
+    .infographic-chart__graphic {
       height: auto;
-      width: 192px; // find this variable.
+      width: 100%;
       min-height: 192px; // resolve sizing conventions.
+    }
+
+    .infographic-chart__values {
+     g {
+        transform-origin: left;
+        @include animation('reveal-chart-vertical 2s');
+      }
+    }
+
+    .infographic-chart__cursor {
+      transform: translateX(-10px);
+    }
+
+    &.infographic-chart--active {
+      .infographic-chart__cursor {
+        transform: translateX(0);
+      }
     }
   }
 
-  .chart__values-bar {
+  .infographic-chart__values {
+    transition: opacity 0.4s;
+  }
+
+  &.infographic-chart--active {
+    .infographic-chart__values { opacity: 0.6; }
+    .infographic-chart__cursor {
+      opacity: 1;
+    }
+  }
+
+  .infographic-chart__values-bar,
+  .infographic-chart__values-line {
     @include graph-stroke-color;
   }
 
-  .chart__values-area {
+  .infographic-chart__values-area {
     @include graph-fill-color;
 
     &--active {
@@ -81,47 +174,28 @@
   }
 }
 
-.chart__stack {
-	.chart { width: 33%; }
+.infographic-chart__stack {
+	.infographic-chart { width: 33%; }
 }
 
-.chart__values {
 
-  @include media-query(lap-and-up) {
-    g {
-    	transform-origin: bottom;
-      @include animation('reveal-chart 2s');
-    }
-  }
-}
-
-.chart__hotspots {
+.infographic-chart__hotspots {
   opacity: 0;
 }
 
-.chart__values-line {
+.infographic-chart__values-line {
 	stroke-width: 1px;
 }
 
-.chart__cursor {
-  stroke: rgba(255, 255, 255, 0.7);
-  stroke-width: 1;
-}
-
-.chart__label-marker {
-  stroke: rgba(255, 255, 255, 0.5);
-  stroke-width: 1;
-}
-
-.chart__values-bar {
+.infographic-chart__values-bar {
 	stroke-width: 12px;
 	transition: stroke-width 0.3s;
 
-	&.chart__values-bar--highlight {
+	&.infographic-chart__values-bar--highlight {
 		stroke-width: 18px;
 	}
 }
 
-.chart__values-point {
+.infographic-chart__values-point {
   stroke-width: 1px;
 }

@@ -6,8 +6,7 @@ const MARKER_SIZE = 4;
 // Ideally we could avoid the below constants
 // and let css define.
 const FONT_SIZE = 14;
-const DEFAULT_WIDTH = 50;
-const DEFAULT_HEIGHT = 50;
+const DEFAULT_PADDING = 50;
 
 export default class Axis extends Component {
   constructor(props) {
@@ -27,31 +26,31 @@ export default class Axis extends Component {
         let textAnchor = "end";
         if (labelPosition === 0) {
           labelOffset = (this.props.layout === 'horizontal') 
-          ? labelOffset + (FONT_SIZE - 5)
+          ? labelOffset + (FONT_SIZE) + 3
           : 0;
           if (this.props.layout === 'vertical') textAnchor = "end";
         } else if (labelPosition > 0 && labelPosition < count) {
           labelOffset = 5;
-        } else if (this.props.layout === 'vertical' && labelPosition === count) {
-          labelOffset = FONT_SIZE - 2;
+        } else if (labelPosition === count) {
+          labelOffset = (this.props.layout === 'vertical') 
+            ? FONT_SIZE - 2 : -5;
         }
         
         // Gather distance of label to travel.
-        let distance = (this.props.layout === 'vertical') 
-          ? this.props.height : this.props.width;
+        let distance = this.props.distance;
 
         // Adjust text position based on layout.
         let textPos = (this.props.layout === 'vertical') 
-          ? ((distance/(count)) * (count- labelPosition)) + labelOffset
+          ? ((distance/(count)) * (count - labelPosition)) + labelOffset
           : ((distance/(count)) * (labelPosition)) + labelOffset;
 
         // Set x and y coords for text.
         let x = (this.props.layout === 'vertical')
-          ? this.props.width - MARKER_SIZE - 10 
+          ? this.props.textPadding - MARKER_SIZE - 10 
           : textPos;
         let y = (this.props.layout === 'vertical') 
           ? textPos 
-          : this.props.height - MARKER_SIZE - 10;
+          : this.props.textPadding - MARKER_SIZE - 10;
 
         return(
           <text key={`${CLASS_ROOT}__label-text-${index}`}
@@ -78,13 +77,15 @@ export default class Axis extends Component {
     for (i = 0; i <= count; i++) { 
       let increment = (stepIncrement === 0) ? 1 : stepIncrement;
       let x1 = (this.props.layout === 'vertical') 
-        ? DEFAULT_WIDTH : increment;
+        ? this.props.textPadding : increment;
       let x2 = (this.props.layout === 'vertical') 
-        ? DEFAULT_WIDTH - MARKER_SIZE : increment;
+        ? this.props.textPadding - MARKER_SIZE : increment;
       let y1 = (this.props.layout === 'vertical') 
-        ? increment : DEFAULT_WIDTH;
+        //? increment : this.props.textPadding; // Todo: top align
+        ? increment : 0;
       let y2 = (this.props.layout === 'vertical') 
-        ? increment : DEFAULT_WIDTH - MARKER_SIZE;
+        //? increment : this.props.textPadding - MARKER_SIZE; // Todo: top align
+        ? increment : 0 + MARKER_SIZE;
       let distance = (this.props.layout === 'vertical') 
         ? nodeHeight : nodeWidth;
 
@@ -106,18 +107,23 @@ export default class Axis extends Component {
       CLASS_ROOT,
       `${CLASS_ROOT}--${this.props.layout}`
     ]);
+    let textPadding = this.props.textPadding;
 
-    let lines = this._renderLines(this.props.height, this.props.width, this.props.count - 1);
+    let width = (this.props.layout === 'vertical') 
+      ? textPadding
+      : this.props.distance;
+    let height = (this.props.layout === 'vertical') 
+      ? this.props.distance
+      : textPadding;
+
+    let lines = this._renderLines(height, width, this.props.count - 1);
     let text = this._renderText(this.props.label, this.props.count - 1);
-    let viewBox = (this.props.layout === 'vertical')
-      ? `0 0 ${this.props.width} ${this.props.height}`
-      : `0 0 ${this.props.width} ${this.props.height}`;
 
     return (
       <div className={classes}>
         <svg
-          style={{height: this.props.height, width: this.props.width}}
-          viewBox={viewBox}
+          style={{height: height, width: width, overflow:'hidden', maxWidth:'100%'}}
+          viewBox={`0 0 ${width} ${height}`}
           preserveAspectRatio="none">
           <g>
             {lines}
@@ -135,24 +141,14 @@ Axis.PropTypes = {
     position: PropTypes.number.isRequired,
     value: PropTypes.string.isRequired
   })),
-  height: PropTypes.number,
-  width: PropTypes.number,
+  textPadding: PropTypes.number,
+  distance: PropTypes.number,
   layout: PropTypes.oneOf(['horizontal', 'vertical'])
 };
 
 Axis.defaultProps = {
   count: 5,
-  height: DEFAULT_HEIGHT,
-  width: DEFAULT_WIDTH,
-  layout: 'vertical',
-  label: [
-    {
-      position: 5,
-      value: '100'
-    },
-    {
-      position: 3,
-      value: '50'
-    }
-  ]
+  textPadding: DEFAULT_PADDING,
+  distance: DEFAULT_PADDING,
+  layout: 'vertical'
 };

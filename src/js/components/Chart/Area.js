@@ -4,34 +4,30 @@ import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import utils from './chart-utils';
 
-const CLASS_ROOT = "chart";
+const CLASS_ROOT = "infographic-chart";
 
 const POINT_RADIUS = 3;
 
-export default class Line extends Component {
+export default class Area extends Component {
 
   constructor(props) {
     super(props);
 
     this._onMouseOver = this._onMouseOver.bind(this);
     this._onMouseOut = this._onMouseOut.bind(this);
+    this._onClick = this._onClick.bind(this);
     this._onResize = this._onResize.bind(this);
     this._layout = this._layout.bind(this);
     this._getBoundsGuides = this._getBoundsGuides.bind(this);
     this._stateFromProps = this._stateFromProps.bind(this);
 
-    this.state = this._stateFromProps(props, this.props.defaultWidth, this.props.defaultHeight);
+    this.state = this._stateFromProps(props, {height: props.defaultHeight, 
+      width: props.defaultWidth});
   }
 
   componentDidMount () {
     window.addEventListener('resize', this._onResize);
     this._onResize();
-  }
-
-  componentWillReceiveProps (newProps) {
-    let state = this._stateFromProps(newProps,
-      this.state.width, this.state.height);
-    this.setState(state);
   }
 
   componentDidUpdate () {
@@ -44,8 +40,7 @@ export default class Line extends Component {
   } 
 
   // Generates state based on the provided props.
-  _stateFromProps (props, width, height) {
-
+  _stateFromProps (props, {width, height, activeIndex = -1}) {
     let elem = (this.refs.chart) ? this.refs.chart : null;
     let bounds = utils.bounds(this._getBoundsGuides(elem));
 
@@ -53,20 +48,38 @@ export default class Line extends Component {
     let size = props.size ||
       (props.small ? 'small' :
         (props.large ? 'large' : null));
+
     return {
       bounds: bounds,
       width: width,
       height: height,
-      size: size
+      size: size,
+      activeIndex: activeIndex
     };
   }
 
-  _onMouseOver (xIndex, value = -1) {
-    // TBD
+  _onMouseOver (event) {
+    this.props.onMouseOver(event);
+    this.setState({
+      activeIndex: event.target.getAttribute('data-index'),
+      active: true
+    });
   }
 
-  _onMouseOut () {
-    // TBD
+  _onClick (event) {
+    this.props.onClick(event);
+    this.setState({
+      activeIndex: event.target.getAttribute('data-index'),
+      active: true
+    });
+  }
+
+  _onMouseOut (event) {
+    // Remove highlighted index.
+    this.props.onMouseOut(event);
+    this.setState({
+      active: false
+    });
   }
 
   _onResize () {
@@ -110,7 +123,7 @@ export default class Line extends Component {
         bounds: bounds
       });
 
-      if (this.props.onResize) this.props.onResize(width, boundGuides.height, bounds);
+      if (this.props.onResize) this.props.onResize(boundGuides.width, boundGuides.height, bounds);
     }
   }
 
@@ -118,26 +131,34 @@ export default class Line extends Component {
     let classes = classnames([
       CLASS_ROOT,
       `${CLASS_ROOT}--${this.props.orientation}`,
-      `${CLASS_ROOT}--${this.props.type}`,
       {
-        [`${CLASS_ROOT}--${this.state.size}`]: this.state.size
+        // Todo: Add size classes
+        [`${CLASS_ROOT}--${this.state.size}`]: this.state.size,
+        [`${CLASS_ROOT}--active`]: this.state.active
       }
     ]);
 
     //let lines = utils.getLinePaths(this.state.bounds, this.props);
     // Seperate out Line and Area components when complete.
     let lines = utils.getAreaPaths(this.state.bounds, this.props);
-    let lineGroup = (<g>{lines}{points}</g>);
+    let lineGroup = (<g>{lines}</g>);
 
     let points = (this.props.points) 
       ? utils.getPointPaths(this.state.bounds, this.props, POINT_RADIUS)
       : null;
 
     let rectangleHotspots = utils.getHotspots(this.state.bounds, 
-      this.props, this.props.a11yTitleId, this.props.onClick, this.props.onMouseOver);
+      this.props, this.props.a11yTitleId, this.onClick, 
+      this._onMouseOver, this._onMouseOut);
+
+    // Define cursor index to render cursor for animations.
+    let cursorIndex = (this.state.activeIndex !== -1) 
+      ? this.state.activeIndex : 0;
+    let cursor = utils.getCursor(
+      this.state.bounds, this.props, 
+      cursorIndex, 'graph-2');
 
     let activeDescendant;
-    let role = 'img';
 
     let a11yTitle = utils.getA11YTitle(this.props.a11yTitle, this.context.intl, 'line');
     let a11yTitleNode;
@@ -156,18 +177,17 @@ export default class Line extends Component {
       );
     }
 
-    let viewBox = `0 0 ${this.state.width} ${this.state.height}`;
-
     return (
       <div className={classes}>
         <svg ref="chart" className={`${CLASS_ROOT}__graphic`}
-          viewBox={viewBox}
-          preserveAspectRatio="none" role={role} tabIndex="0" 
+          viewBox={`0 0 ${this.state.width} ${this.state.height}`}
+          preserveAspectRatio="none" role="img" tabIndex="0" 
           aria-activedescendant={activeDescendant}
           aria-labelledby={this.props.a11yTitleId + ' ' + this.props.a11yDescId} >
           {a11yTitleNode}
           {a11yDescNode}
-          <g className={`${CLASS_ROOT}__values`}>{lineGroup}</g>
+          <g className={`${CLASS_ROOT}__values`}>{lineGroup}{points}</g>
+          <g>{cursor}</g>
           <g className={`${CLASS_ROOT}__hotspots`}>{rectangleHotspots}</g>
         </svg>
       </div>
@@ -176,7 +196,7 @@ export default class Line extends Component {
 
 }
 
-Line.propTypes = {
+Area.propTypes = {
   a11yTitle: PropTypes.string,
   a11yTitleId: PropTypes.string,
   a11yDescId: PropTypes.string,
@@ -210,11 +230,11 @@ Line.propTypes = {
   smooth: PropTypes.bool
 };
 
-Line.contextTypes = {
+Area.contextTypes = {
   intl: PropTypes.object
 };
 
-Line.defaultProps = {
+Area.defaultProps = {
   a11yTitleId: 'chart-title',
   a11yDescId: 'chart-desc',
   defaultHeight: 192,

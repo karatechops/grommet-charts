@@ -1,15 +1,16 @@
 // (C) Copyright 2014-2015 Hewlett Packard Enterprise Development LP
 
-import React from 'react';
+import React, { Component } from 'react';
 import Article from 'grommet/components/Article';
 import Section from 'grommet/components/Section';
 import Headline from 'grommet/components/Headline';
 import Tabs from 'grommet/components/Tabs';
 import Tab from 'grommet/components/Tab';
-import VerticalLineChart from './VerticalLineChartTest';
+import Box from 'grommet/components/Box';
+import AreaChartDemo from './AreaChartDemo';
 
-const HomeSection = React.createClass({
-  render: function () {
+class HomeSection extends Component {
+  render() {
     return (
       <Section {...this.props}
         appCentered={true} justify="center" align="center" full={true}
@@ -18,18 +19,10 @@ const HomeSection = React.createClass({
       </Section>
     );
   }
-});
+};
 
-const Home = React.createClass({
-  contextTypes: {
-    routePrefix: React.PropTypes.string.isRequired
-  },
-
-  _onClick: function () {
-    // no-op
-  },
-
-  render: function() {
+export default class Home extends Component {
+  render() {
     return (
       <Article className="home" scrollStep={false} controls={false}>
 
@@ -37,9 +30,56 @@ const Home = React.createClass({
           <div className="tabs-container">
             <Tabs>
 
-              <Tab title="Vertical Line Chart">
-                <Headline>Vertical Line Chart</Headline>
-                <VerticalLineChart />
+              <Tab title="Multi Area Chart">
+                <Headline>Multi Area Chart</Headline>
+                <Box direction="row" justify="between">
+                  <AreaChartDemo series={[
+                    {
+                      label: "Millennials",
+                      values: [4.24, 4.18, 4.19, 4.21, 4.25, 4.36, 4.45,
+                        4.55, 4.65, 4.73, 4.55, 4.25, 4.36, 4.32, 4.35],
+                      units: "M",
+                      axisValues: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+                        25, 26, 27, 28, 29, 30],
+                      colorIndex: "graph-3",
+                      axisValuesUnits: "years old"
+                    }]}
+                    axis={{
+                      label: [
+                        {position: 7, value: '35'},
+                        {position: 1, value: '15'}]
+                    }} /><AreaChartDemo series={[
+                      {
+                        label: "Generation X",
+                        values: [4.12, 4.22, 3.99, 3.88, 3.32, 3.45, 3.55,
+                        3.65, 3.75, 3.53, 3.55, 3.25, 3.36, 4.32, 4.35],
+                        units: "M",
+                        axisValues: [35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+                          45, 46, 47, 48, 49, 50],
+                        colorIndex: "graph-3",
+                        axisValuesUnits: "years old"
+                      }]}
+                    axis={{
+                      label: [
+                        {position: 7, value: '50'},
+                        {position: 1, value: '36'}]
+                    }} /><AreaChartDemo series={[
+                      {
+                        label: "Baby Boomers",
+                        values: [4.35, 4.18, 4.19, 4.12, 4.15, 3.95, 3.65,
+                        3.55, 3.65, 3.73, 3.55, 3.35, 2.85, 2.65, 2.55],
+                        units: "M",
+                        axisValues: [55, 56, 57, 58, 59, 60, 61, 62, 63, 64,
+                          65, 66, 67, 68, 69, 70],
+                        colorIndex: "graph-3",
+                        axisValuesUnits: "years old"
+                      }]}
+                    axis={{
+                      label: [
+                        {position: 7, value: '70'},
+                        {position: 1, value: '51'}]
+                    }} />
+                </Box>
               </Tab>
               
             </Tabs>
@@ -49,7 +89,4 @@ const Home = React.createClass({
       </Article>
     );
   }
-
-});
-
-export default Home;
+};

@@ -5,7 +5,8 @@
 @import 'grommet/scss/grommet-core/index';
 @import 'grommet/scss/hpe/objects.button-hpe';
 @import 'objects.chart';
-@import 'objects.infographics-chart';
+@import 'objects.infographic-legend';
+@import 'objects.summary';
 @import 'objects.axis';
 
 // Demo specific.
@@ -72,6 +73,57 @@
   }
 }
 
+.chart-demo {
+	display: flex;
+	flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+
+  @media(min-width: 45em) {
+		width: 32%;
+		flex-grow: 0;
+  }
+
+  .box {
+  	flex-grow: 1;
+  }
+
+	.axis--vertical {
+		//align-self: flex-start;
+		padding: 0 10px 0 0;
+	}
+
+	.axis--horizontal {
+		// For demo purposes.
+		//margin-left: 80px;
+	}
+
+	.infographic-chart.infographic-chart--horizontal
+	.infographic-chart__graphic {
+    height: auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .chart-demo__container {
+    display: flex;
+    flex-direction: row-reverse;
+
+    @media(min-width: 45em) {
+    	flex-direction: column;
+  	}
+  }
+
+  .infographics-legend {
+  	left: 0;
+
+  	@media(min-width: 45em) {
+	    left: 50%;
+	    transform: translateX(-50%);
+  	}
+  }
+}
+
 .chart {
 	.chart__xaxis-index--highlight text {
 		fill: #fff;
@@ -83,7 +135,9 @@
 
 		.chart__cursor-point {
 			stroke-width: 2px;
+			// Swap these for variables.
 			stroke: #425563;
+			fill: nth($brand-neutral-colors, 2);
 		}
 	}
 

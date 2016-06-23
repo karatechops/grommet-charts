@@ -1,7 +1,7 @@
 import React from 'react';
 import Intl from 'grommet/utils/Intl';
 
-const CLASS_ROOT = 'chart';
+const CLASS_ROOT = 'infographic-chart';
 const POINT_RADIUS = 3;
 
 export default {
@@ -67,10 +67,11 @@ export default {
     let graphHeight = height;
 
     let graphTop = 0;
-    let graphBottom = (!points) ? height : height - POINT_RADIUS;
+    let graphBottom = height;
 
-    let graphLeft = (!points) ? 0 : POINT_RADIUS + 2;
-    let graphRight = (!points) ? graphWidth : graphWidth - POINT_RADIUS + 2;
+    let graphLeft = 0;
+    let graphRight = graphWidth;
+
 
     let valueCount = (orientation === 'horizontal') 
       ? maxX
@@ -121,17 +122,17 @@ export default {
 
   // Translates Y value to Y coordinate.
   _translateY (y, bounds) {
-    // leave room for line width since strokes are aligned to the center
-    let translatedY = Math.max(1,
-      (bounds.graphBottom - Math.max(1, this._translateHeight(y, bounds))));
+    let translatedY = bounds.graphBottom - this._translateHeight(y, bounds);
 
     return translatedY;
   },
 
   // Translates Y value to graph height.
   _translateHeight (y, bounds) {
-    let translatedHeight = Math.round((y - bounds.minY) * bounds.scaleY);
 
+    let translatedHeight = Math.max(
+      Math.round((y - bounds.minY) * bounds.scaleY),
+      1);
     return translatedHeight;
   },
 
@@ -201,7 +202,7 @@ export default {
       }
 
       // Lower top most coordinates to accommodate points.
-      if (points && coordinate[1] <= 1) coordinate[1] = coordinate[1] + POINT_RADIUS;
+      //if (points && coordinate[1] <= 1) coordinate[1] = coordinate[1] + POINT_RADIUS;
       if (0 === index) {
         commands = "M" + coordinate.join(',');
       } else {
@@ -239,7 +240,7 @@ export default {
         let axisValue = (item.axisValues !== undefined) ? item.axisValues[index] : index;
         let units = (item.units !== undefined) ? item.units : '';
 
-        if (coordinate[1] <= 1) coordinate[1] = coordinate[1] + radius;
+        //if (coordinate[1] <= 1) coordinate[1] = coordinate[1] + radius;
         pointsPaths.push(
           <circle key={`series${seriesIndex}-${index}`}
             className={`${CLASS_ROOT}__values-point color-index-${colorIndex}`}
@@ -256,6 +257,7 @@ export default {
     return values;
   },
 
+  // Generate area path based on data.
   getAreaPaths (bounds, {series, orientation, smooth, points}) {
     let bottom = bounds.graphBottom;
     let area = series.map((item, seriesIndex) => {
@@ -294,6 +296,7 @@ export default {
     return area;
   },
 
+  // Generate line path based on data.
   getLinePaths (bounds, {series, orientation, smooth, points}) {
     let values = series.map((item, seriesIndex) => {
 
@@ -320,33 +323,56 @@ export default {
     return values;
   },
 
-  // Generate rectangles used for hotspots. Todo ---
-  getHotspots (bounds, {series, valueCount, orientation}, a11yTitleId, onClick, onMouseOver) {
+  // Generate rectangles used for hotspots.
+  getHotspots (bounds, {series, valueCount, orientation}, 
+    a11yTitleId, onClick, onMouseOver, onMouseOut) {
     let className = `${CLASS_ROOT}__front`;
     let hotspots = series.map((item, index) => {
-      // Todo: classes
-
-      let width = (orientation === 'horizontal') 
-        ? bounds.stepWidth : bounds.graphWidth;
-      let height = (orientation === 'horizontal')
-        ? bounds.graphHeight : bounds.stepWidth;
-
       let values = item.values.map((value, valueIndex) => {
-        let y = this._translateY(valueIndex, bounds) - (bounds.stepWidth / 2);
+        let y = (orientation === 'horizontal') 
+        ? 0
+        // Subtract max Y value to reverse order
+        // this aligns values correctly for vertical.
+        : this._translateY((bounds.maxY - valueIndex), bounds) - (bounds.stepWidth / 2);
+        let x = (orientation === 'horizontal') 
+        ? this._translateX(valueIndex, bounds) - (bounds.stepWidth / 2)
+        : 0;
+
+        let width = (orientation === 'horizontal') 
+          ? bounds.stepWidth : bounds.graphWidth;
+        let height = (orientation === 'horizontal')
+          ? bounds.graphHeight : bounds.stepWidth;
+
         let hotspotId = `${a11yTitleId}_x_band_${valueIndex}`;
         let hotspotTitleId = `${a11yTitleId}_x_band_title_${valueIndex}`;
         let dataValue = value;
-        let axisValue = (item.axisValues !== undefined) ? item.axisValues[valueIndex] : valueIndex;
-        let units = (item.units !== undefined) ? item.units : '';
-        let axisValuesUnits = (item.axisValuesUnits !== undefined) ? item.axisValuesUnits : '';
+        let axisValue = (item.axisValues !== undefined) 
+          ? item.axisValues[valueIndex] : valueIndex;
+        let units = (item.units !== undefined) 
+          ? item.units : '';
+        let axisValuesUnits = (item.axisValuesUnits !== undefined) 
+          ? item.axisValuesUnits : '';
+
+        // Clean up outter most hot spots. Add thumb padding.
+        if (valueIndex === 0 || valueIndex === item.values.length -1) {
+          let thumbPadding = 5;
+          if (orientation === 'horizontal' && valueIndex === 0) {
+            x = x + (bounds.stepWidth / 2) - thumbPadding;
+            width = thumbPadding + (width / 2);
+          }
+          if (orientation === 'vertical' && valueIndex === 0) {
+            y = (y + (bounds.stepWidth / 2)) - thumbPadding;
+            height = thumbPadding + (height / 2);
+          }
+        }
 
         return (
           <g key={hotspotId} id={hotspotId} role="tab"
             aria-labelledby={hotspotTitleId} onClick={onClick}
-            onMouseOver={onMouseOver}>
+            onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
             <title id={hotspotTitleId}></title>
             <rect role="presentation" className={`${className}-xband-background`}
-              x={0} y={y} width={width} height={height}
+              x={x} y={y} width={width} height={height} data-index={valueIndex}
               data-value={dataValue} data-units={units}
               data-axis-value={axisValue} data-axis-units={axisValuesUnits}/>
           </g>
@@ -358,6 +384,48 @@ export default {
     return (
       <g ref="front" className={className}>
         {hotspots}
+      </g>
+    );
+  },
+
+  // Generate cursor.
+  getCursor(bounds, {series, orientation, points}, activeIndex, colorIndex) {
+    let value = series[0].values[activeIndex];
+    let coordinates = this._coordinates(value, activeIndex, bounds, orientation);
+
+    // Offset it just a little if it is at an edge.
+    let x1 = (orientation === 'horizontal')
+      ? Math.max(1, Math.min(coordinates[0], bounds.graphWidth - 1))
+      : bounds.graphLeft;
+
+    let x2 = (orientation === 'horizontal')
+      ? x1
+      : bounds.graphRight;
+
+    let y1 = (orientation === 'horizontal')
+    ? bounds.graphTop
+    : Math.max(1, Math.min(coordinates[1], bounds.graphWidth - 1));
+
+    let y2 = (orientation === 'horizontal')
+    ? bounds.graphBottom
+    : y1;
+
+    let linePath = (
+      <line fill="none" x1={x1} y1={y1} x2={x2} y2={y2} />
+    );
+
+    let pointColorIndex = colorIndex;
+
+    let pointPath = (
+      <circle key={`circle-${activeIndex}`}
+        className={`${CLASS_ROOT}__cursor-point color-index-${pointColorIndex}`}
+        cx={coordinates[0]} cy={coordinates[1]} r={Math.round(POINT_RADIUS * 2.5)} />
+    );
+
+    return (
+      <g ref="cursor" role="presentation" className={`${CLASS_ROOT}__cursor`}>
+        {linePath}
+        {pointPath}
       </g>
     );
   },

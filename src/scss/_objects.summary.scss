@@ -1,0 +1,21 @@
+.summary {
+	opacity: 0;
+	transition: opacity 0.4s;
+
+	&.summary--active { opacity: 100; }
+
+	.summary__title {
+		display: block;
+	}
+
+	.summary__unit {
+		// Todo: tie this into a variable.
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	.heading {
+		display: inline-block;
+		margin: 0;
+		padding: 0;
+	}
+}
