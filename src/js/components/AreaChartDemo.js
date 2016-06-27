@@ -20,10 +20,10 @@ export default class AreaChartDemo extends Component {
     window.addEventListener('resize', this._onWindowResize);
     this.state = {
       legend: {
-        value: '',
-        axisValue: '',
-        units: '',
-        axisUnits: '',
+        value: '0',
+        axisValue: '0',
+        units: ' ',
+        axisUnits: ' ',
         top: 0,
         visible: false
       },
@@ -81,6 +81,12 @@ export default class AreaChartDemo extends Component {
     let top = (this.state.layout === 'horizontal') 
       ? targetRect.height + 40 // add Axis height.
       : Number(target.getAttribute('y')) + (targetRect.height /2) + 1;
+      //console.log('targetRect height', targetRect.height);
+    // Demo purposes, adjust for dynamic placement.
+    let legendRect = this.refs.legend.getBoundingClientRect();
+    console.log(legendRect.height);
+    if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') 
+      top = Number(target.getAttribute('y')) - (legendRect.height - 4);
 
     this.setState({
       legend: {

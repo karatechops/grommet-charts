@@ -54,6 +54,7 @@
   stroke-width: 1;
   opacity: 0;
   transition: all 0.25s ease-out;
+  pointer-events: none;
 
   .infographic-chart__cursor-point {
     stroke-width: 2px;

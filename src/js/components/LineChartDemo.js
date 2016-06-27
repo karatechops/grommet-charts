@@ -19,8 +19,8 @@ export default class LineChartDemo extends Component {
     window.addEventListener('resize', this._onWindowResize);
     this.state = {
       legend: {
-        value: '',
-        axisValue: '',
+        value: '0',
+        axisValue: '0',
         units: '',
         axisUnits: '',
         top: 0,
@@ -80,6 +80,10 @@ export default class LineChartDemo extends Component {
     let top = (this.state.layout === 'horizontal') 
       ? targetRect.height + 40 // add Axis height.
       : Number(target.getAttribute('y')) + (targetRect.height /2) + 1;
+
+    // Demo purposes, adjust for dynamic placement.
+    let legendRect = this.refs.legend.getBoundingClientRect();
+    if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') top = Number(target.getAttribute('y')) - (legendRect.height - 8);
 
     this.setState({
       legend: {

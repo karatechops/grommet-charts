@@ -8,6 +8,8 @@
   z-index: 2;
   transition: opacity 0.4s;
 
+  * { pointer-events: none; }
+
   @media(min-width: 45em) {
   	width: 100%;
   }
@@ -28,6 +30,7 @@
 	.grommetux-heading {
 		margin: 0;
 		padding: 0;
+    pointer-events: none;
 
 		.infographic-legend__unit {
 			margin: 0 1px;

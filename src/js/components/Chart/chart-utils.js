@@ -411,7 +411,7 @@ export default {
 
     let y1 = (orientation === 'horizontal')
     ? bounds.graphTop
-    : Math.max(1, Math.min(coordinates[1], bounds.graphWidth - 1));
+    : Math.max(1, Math.min(coordinates[1], bounds.graphHeight - 1));
 
     let y2 = (orientation === 'horizontal')
     ? bounds.graphBottom
