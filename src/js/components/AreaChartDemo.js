@@ -86,7 +86,7 @@ export default class AreaChartDemo extends Component {
     let legendRect = this.refs.legend.getBoundingClientRect();
     console.log(legendRect.height);
     if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') 
-      top = Number(target.getAttribute('y')) - (legendRect.height - 4);
+      top = Number(target.getAttribute('y')) - (legendRect.height - 3);
 
     this.setState({
       legend: {
