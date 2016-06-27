@@ -1,33 +1,33 @@
 @import 'grommet/scss/grommet-core/objects.meter';
 
 .chart-demo-spiral {
-	.meter__value,
-	.meter__tracks { display: none; }
+	.grommetux-meter__value,
+	.grommetux-meter__tracks { display: none; }
 
-	.meter__labels text { fill: #fff; }
-	.meter__slice {
+	.grommetux-meter__labels text { fill: #fff; }
+	.grommetux-meter__slice {
 		stroke-width: 8px;
 		&.color-index-unset { stroke: rgba(255, 255, 255, 0); }
 	}
 
-	.meter__graphic {
+	.grommetux-meter__graphic {
 		width: 100%;
 		height: auto;
 		max-width: 275px;
 	}
 
-	.meter__value-container,
-	.meter__graphic-container {
+	.grommetux-meter__value-container,
+	.grommetux-meter__graphic-container {
 		width: 100%;
 		max-height: 275px;
 	}
 
-	.meter--active {
-		path:not(.meter__slice--active),
-		text:not(.meter__label--active) { opacity: 0.5; }
+	.grommetux-meter--active {
+		path:not(.grommetux-meter__slice--active),
+		text:not(.grommetux-meter__label--active) { opacity: 0.5; }
 	}
 
-	.meter__values .meter__slice {
+	.grommetux-meter__values .grommetux-meter__slice {
     transition: stroke-width 0.2s;
     @include animation('draw-arc 1.5s ease-out');
   }

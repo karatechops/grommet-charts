@@ -249,7 +249,7 @@ export default {
 
         pointsPaths.push(
           <circle key={`series${seriesIndex}-${index}`}
-            className={`${CLASS_ROOT}__point color-index-${colorIndex}`}
+            className={`${CLASS_ROOT}__point grommetux-color-index-${colorIndex}`}
             style={{animationDelay: `${animationDelay}s`}}
             cx={x} cy={coordinate[1]} r={radius} 
             data-value={value}
@@ -288,7 +288,7 @@ export default {
 
       let areaCommands = commands + close;
       let classes = [`${CLASS_ROOT}__values-area`,
-        `color-index-${colorIndex}`];
+        `grommetux-color-index-${colorIndex}`];
       if (item.onClick) {
         classes.push(`${CLASS_ROOT}__values-area--active`);
       }
@@ -318,7 +318,7 @@ export default {
       let commands = this._getLineCommands(coordinates, smooth, points);
 
       let classes = [`${CLASS_ROOT}__values-line`,
-        `color-index-${colorIndex}`];
+        `grommetux-color-index-${colorIndex}`];
 
       let linePath = (
         <path key={`line-${seriesIndex}`} fill="none" className={classes.join(' ')} d={commands} />
@@ -425,7 +425,7 @@ export default {
 
     let pointPath = (
       <circle key={`circle-${activeIndex}`}
-        className={`${CLASS_ROOT}__cursor-point color-index-${pointColorIndex}`}
+        className={`${CLASS_ROOT}__cursor-point grommetux-color-index-${pointColorIndex}`}
         cx={coordinates[0]} cy={coordinates[1]} r={Math.round(POINT_RADIUS * 2.5)} />
     );
 

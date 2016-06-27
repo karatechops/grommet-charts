@@ -13,7 +13,7 @@
 
 // Demo specific.
 
-.box--full {
+.grommetux-box--full {
   max-width: 1250px;
   width: 100%;
   margin: 0 auto;
@@ -24,39 +24,39 @@
 	width: 100%;
 }
 
-.tabs {
+.grommetux-tabs {
   border-bottom: none;
   margin-bottom: 24px;
   color: #fff;
 
-  .tab__label {
+  .grommetux-tab__label {
   	color: rgba(255, 255, 255, 0.6);
   	padding-bottom: 2px;
   	border-bottom: 2px solid rgba(255, 255, 255, 0.6);
   }
 
-  .tab--active .tab__label,
-  .tab--active .tab__link:hover .tab__label {
+  .grommetux-tab--active .grommetux-tab__label,
+  .grommetux-tab--active .grommetux-tab__link:hover .grommetux-tab__label {
   	color: #fff;
   	border-color: #fff;
   }
 
-  .tab:hover .tab__label {
+  .grommetux-tab:hover .grommetux-tab__label {
     border-color: #fff;
 	}
 }
 
-.headline {
+.grommetux-headline {
 	max-width: 980px;
 	margin: 0 auto;
 	padding: 30px 0;
 }
 
-.heading {
+.grommetux-heading {
 	padding: 30px 0;
 }
 
-.carousel {
+.grommetux-carousel {
 	.carousel__item {
 		// Padding for navigation arrows.
 		@media(min-width: 45em) {
@@ -107,7 +107,7 @@
   	}
   }
 
-  .box {
+  .grommetux-box {
   	flex-grow: 1;
   }
 
@@ -141,8 +141,8 @@
   }
 
   .infographic-chart__front g,
-  .meter__values g,
-  .meter__labels text {
+  .grommetux-meter__values g,
+  .grommetux-meter__labels text {
   	cursor: pointer;
   }
 }

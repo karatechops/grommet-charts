@@ -6,12 +6,12 @@ import ReactDOM from 'react-dom';
 import Responsive from 'grommet/utils/Responsive';
 import Legend from 'grommet/components/Legend';
 import Bar from 'grommet/components/meter/Bar';
-import Spiral from './Spiral';
+import Spiral from 'grommet/components/meter/Spiral';
 import Circle from 'grommet/components/meter/Circle';
 import Arc from 'grommet/components/meter/Arc';
 import Intl from 'grommet/utils/Intl';
 
-const CLASS_ROOT = "meter";
+const CLASS_ROOT = "grommetux-meter";
 
 const TYPE_COMPONENT = {
   'bar': Bar,
