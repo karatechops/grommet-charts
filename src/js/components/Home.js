@@ -7,7 +7,7 @@ import Headline from 'grommet/components/Headline';
 import Tabs from 'grommet/components/Tabs';
 import Tab from 'grommet/components/Tab';
 import Box from 'grommet/components/Box';
-import Carousel from 'grommet/components/Carousel';
+//import Carousel from 'grommet/components/Carousel';
 import AreaChartDemo from './AreaChartDemo';
 import LineChartDemo from './LineChartDemo';
 import SpiralChartDemo from './SpiralChartDemo';
