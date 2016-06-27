@@ -8,6 +8,7 @@
 @import 'objects.infographic-legend';
 @import 'objects.summary';
 @import 'objects.axis';
+@import 'objects.carousel';
 
 // Demo specific.
 
@@ -54,6 +55,15 @@
 	padding: 30px 0;
 }
 
+.carousel {
+	.carousel__item {
+		// Padding for navigation arrows.
+		@media(min-width: 45em) {
+			padding: 0 80px;
+		}
+	}
+}
+
 .stacked-chart {
   display: flex;
   width: 100%;
@@ -79,9 +89,55 @@
   align-items: center;
   justify-content: center;
 
-  @media(min-width: 45em) {
-		width: 32%;
-		flex-grow: 0;
+  &.chart-demo-multi-area {
+		@media(min-width: 45em) {
+			width: 32%;
+			flex-grow: 0;
+	  }
+
+	  .infographic-chart--active {
+	    .infographic-chart__values { opacity: 0.6; }
+	  }
+  }
+
+  &.chart-demo-line {
+  	.infographic-chart--vertical .infographic-chart__graphic {
+  		min-height: 320px;
+  	}
+  }
+
+  &.chart-demo-spiral {
+  	.meter__value,
+  	.meter__tracks { display: none; }
+
+  	.meter__labels text { fill: #fff; }
+  	.meter__slice {
+  		stroke-width: 8px;
+  		&.color-index-unset { stroke: rgba(255, 255, 255, 0); }
+  	}
+
+  	.meter__graphic {
+  		width: 100%;
+  		height: auto;
+  		max-width: 275px;
+  	}
+
+  	.meter__value-container,
+  	.meter__graphic-container {
+  		width: 100%;
+  		max-height: 275px;
+  	}
+
+  	.meter--active {
+  		path:not(.meter__slice--active),
+  		text:not(.meter__label--active) { opacity: 0.5; }
+  	}
+
+  	.meter__values .meter__slice {
+	    @include media-query(lap-and-up) {
+	      animation-timing-function: ease-out;
+	    }
+	  }
   }
 
   .box {
@@ -89,13 +145,7 @@
   }
 
 	.axis--vertical {
-		//align-self: flex-start;
 		padding: 0 10px 0 0;
-	}
-
-	.axis--horizontal {
-		// For demo purposes.
-		//margin-left: 80px;
 	}
 
 	.infographic-chart.infographic-chart--horizontal

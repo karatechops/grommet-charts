@@ -3,11 +3,10 @@ import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import Box from 'grommet/components/Box';
 import Heading from 'grommet/components/Heading';
-import Area from './Chart/Area';
-import Summary from './Chart/Summary';
+import Line from './Chart/Line';
 import Axis from './Chart/Axis';
 
-export default class AreaChartDemo extends Component {
+export default class LineChartDemo extends Component {
   constructor(props) {
     super(props);
 
@@ -126,57 +125,41 @@ export default class AreaChartDemo extends Component {
       </div>
     );
 
-    let mobileSummary = (this.state.layout === 'horizontal')
-      ? null
-      : (
-          <Box align="center" justify="center" direction="row" pad="small">
-            <Summary value={this.props.series[0].values} units="M" title={this.props.series[0].label}
-              visible={this.state.legend.visible}/>
-          </Box>
-        );
-
-    let desktopSummary = (this.state.layout === 'horizontal') 
-      ? (
-        <Summary value={this.props.series[0].values} units="M" title={this.props.series[0].label}
-            visible={this.state.legend.visible}/>
-      ) : null;
-
     let axis = (
       <Axis label = {this.props.axis.label}
         layout={this.state.layout}
-        textPadding={30}
+        textPadding={45}
         align='top'
         distance={(this.state.layout === 'horizontal') 
         ? this.state.chart.width : this.state.chart.height}
-        count={7} />
+        count={this.props.axis.count} />
     );
 
     return (
-      <div className="chart-demo chart-demo-multi-area">
-        {mobileSummary}
+      <div className="chart-demo chart-demo-line">
           <Box direction="column">
-            <div className="chart-demo__container" style={{position:'relative'}}>
-              <div style={{position:'relative'}}>
-                {legend}
-                <Area series={this.props.series}
+            <div className="chart-demo__container">
+              <div style={{position:'relative', width:'100%'}}>
+                <Line series={this.props.series}
                   orientation={this.state.layout}
                   onClick={this._onClick}
                   onMouseOver={this._onMouseOver}
                   onMouseOut={this._onMouseOut}
                   onResize={this._onChartResize}
-                  min={2.5}
+                  min={62}
+                  points={true}
                   a11yTitleId="lineClickableChartTitle" a11yDescId="lineClickableChartDesc" />
+                {legend}
               </div>
               {axis}
           </div>
-          {desktopSummary}
         </Box>
       </div>
     );
   }
 }
 
-AreaChartDemo.PropTypes = {
+LineChartDemo.PropTypes = {
   title: PropTypes.string.isRequired,
   series: PropTypes.arrayOf(
     PropTypes.shape({

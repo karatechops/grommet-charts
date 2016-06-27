@@ -34,6 +34,18 @@
   }
 }
 
+@include keyframes(fade-in-scale-up) {
+  0% {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 // Naming this infographic chart instead
 // of chart to avoid naming conflict.
 
@@ -93,7 +105,8 @@
     }
 
     .infographic-chart__values {
-     g {
+     .infographic-chart__lines,
+     .infographic-chart__area {
         transform-origin: bottom;
         @include animation('reveal-chart-horizontal 2s');
       }
@@ -132,7 +145,8 @@
     }
 
     .infographic-chart__values {
-     g {
+     .infographic-chart__lines,
+     .infographic-chart__area {
         transform-origin: left;
         @include animation('reveal-chart-vertical 2s');
       }
@@ -154,7 +168,6 @@
   }
 
   &.infographic-chart--active {
-    .infographic-chart__values { opacity: 0.6; }
     .infographic-chart__cursor {
       opacity: 1;
     }
@@ -184,7 +197,7 @@
 }
 
 .infographic-chart__values-line {
-	stroke-width: 1px;
+	stroke-width: 2px;
 }
 
 .infographic-chart__values-bar {
@@ -196,6 +209,11 @@
 	}
 }
 
-.infographic-chart__values-point {
-  stroke-width: 1px;
+.infographic-chart__point {
+  stroke-width: 2px;
+  fill: #425563;
+  @include graph-stroke-color;
+  transform-origin: center;
+  -webkit-animation: 'fade-in-scale-up' 1s 1.5s 1 both ease-out;
+  animation: 'fade-in-scale-up' 1s 1.5s 1 both ease-out;
 }

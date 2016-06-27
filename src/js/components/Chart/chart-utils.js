@@ -233,17 +233,24 @@ export default {
       });
 
       let pointsPaths = [];
+
       coordinates.forEach((coordinate, index) => {
         let x = Math.max(radius + 1,
-          Math.min(bounds.graphWidth - (radius + 1), coordinate[0]));
+          Math.min(bounds.graphWidth, coordinate[0]));
         let value = item.values[index];
         let axisValue = (item.axisValues !== undefined) ? item.axisValues[index] : index;
         let units = (item.units !== undefined) ? item.units : '';
 
+        if (index === 0 && orientation === 'horizontal') x = radius / 2;
+        if (index === coordinates.length - 1 && orientation === 'horizontal') 
+          x = bounds.graphWidth + radius / 2;
         //if (coordinate[1] <= 1) coordinate[1] = coordinate[1] + radius;
+        let animationDelay = 1.5 + (index * .1);
+
         pointsPaths.push(
           <circle key={`series${seriesIndex}-${index}`}
-            className={`${CLASS_ROOT}__values-point color-index-${colorIndex}`}
+            className={`${CLASS_ROOT}__point color-index-${colorIndex}`}
+            style={{animationDelay: `${animationDelay}s`}}
             cx={x} cy={coordinate[1]} r={radius} 
             data-value={value}
             data-axis-value={axisValue}

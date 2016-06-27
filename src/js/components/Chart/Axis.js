@@ -22,18 +22,24 @@ export default class Axis extends Component {
         let labelOffset = 0;
         let labelPosition = label.position - 1;
 
+        // Todo: Allow for various point sizes. Adjust on the fly.
         // Determine offsets to keep text aligned on markers.
         let textAnchor = "end";
         if (labelPosition === 0) {
           labelOffset = (this.props.layout === 'horizontal') 
-          ? labelOffset + (FONT_SIZE) + 3
-          : 0;
+          ? 5
+          : FONT_SIZE - 4;
           if (this.props.layout === 'vertical') textAnchor = "end";
+          if (this.props.layout === 'horizontal') textAnchor = "start";
         } else if (labelPosition > 0 && labelPosition < count) {
-          labelOffset = 5;
+          // 7.5 is character width, could listen to CDM and adjust offset?
+          if (this.props.layout === 'horizontal') 
+            labelOffset = (label.value.length * 7.5) / 2;
+          if (this.props.layout === 'vertical') 
+            labelOffset = FONT_SIZE / 2 - 3;
         } else if (labelPosition === count) {
           labelOffset = (this.props.layout === 'vertical') 
-            ? FONT_SIZE - 2 : -5;
+            ? -2 : -5;
         }
         
         // Gather distance of label to travel.
@@ -41,8 +47,8 @@ export default class Axis extends Component {
 
         // Adjust text position based on layout.
         let textPos = (this.props.layout === 'vertical') 
-          ? ((distance/(count)) * (count - labelPosition)) + labelOffset
-          : ((distance/(count)) * (labelPosition)) + labelOffset;
+          ? Math.round(((distance/(count)) * (labelPosition)) + labelOffset)
+          : Math.round(((distance/(count)) * (labelPosition)) + labelOffset);
 
         // Set x and y coords for text.
         let x = (this.props.layout === 'vertical')
@@ -52,6 +58,11 @@ export default class Axis extends Component {
           ? textPos 
           : this.props.textPadding - MARKER_SIZE - 10;
 
+        // Reverse labels for vertical layout.
+        let text = (this.props.layout === 'vertical') 
+          ? label.value
+          : label.value;
+
         return(
           <text key={`${CLASS_ROOT}__label-text-${index}`}
             x={x}
@@ -59,7 +70,7 @@ export default class Axis extends Component {
             role="presentation" 
             className={`${CLASS_ROOT}__label-text`}
             textAnchor={textAnchor} fontSize={FONT_SIZE}>
-            {label.value}
+            {text}
           </text>
         );
       }

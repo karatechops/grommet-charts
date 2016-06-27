@@ -6,9 +6,9 @@ import utils from './chart-utils';
 
 const CLASS_ROOT = "infographic-chart";
 
-const POINT_RADIUS = 3;
+const POINT_RADIUS = 4;
 
-export default class Area extends Component {
+export default class Line extends Component {
 
   constructor(props) {
     super(props);
@@ -138,8 +138,10 @@ export default class Area extends Component {
       }
     ]);
 
-    let area = utils.getAreaPaths(this.state.bounds, this.props);
-    let areaGroup = (<g className={`${CLASS_ROOT}__area`}>{area}</g>);
+    let lines = utils.getLinePaths(this.state.bounds, this.props);
+    // Seperate out Line and Area components when complete.
+    //let lines = utils.getAreaPaths(this.state.bounds, this.props);
+    let lineGroup = (<g className={`${CLASS_ROOT}__lines`}>{lines}</g>);
 
     let points = (this.props.points) 
       ? utils.getPointPaths(this.state.bounds, this.props, POINT_RADIUS)
@@ -159,7 +161,7 @@ export default class Area extends Component {
 
     let activeDescendant;
 
-    let a11yTitle = utils.getA11YTitle(this.props.a11yTitle, this.context.intl, 'area');
+    let a11yTitle = utils.getA11YTitle(this.props.a11yTitle, this.context.intl, 'line');
     let a11yTitleNode;
     if (a11yTitle) {
       a11yTitleNode = (
@@ -185,7 +187,7 @@ export default class Area extends Component {
           aria-labelledby={this.props.a11yTitleId + ' ' + this.props.a11yDescId} >
           {a11yTitleNode}
           {a11yDescNode}
-          <g className={`${CLASS_ROOT}__values`}>{areaGroup}{pointGroup}</g>
+          <g className={`${CLASS_ROOT}__values`}>{lineGroup}{pointGroup}</g>
           <g>{cursor}</g>
           <g className={`${CLASS_ROOT}__hotspots`}>{rectangleHotspots}</g>
         </svg>
@@ -195,7 +197,7 @@ export default class Area extends Component {
 
 }
 
-Area.propTypes = {
+Line.propTypes = {
   a11yTitle: PropTypes.string,
   a11yTitleId: PropTypes.string,
   a11yDescId: PropTypes.string,
@@ -229,11 +231,11 @@ Area.propTypes = {
   smooth: PropTypes.bool
 };
 
-Area.contextTypes = {
+Line.contextTypes = {
   intl: PropTypes.object
 };
 
-Area.defaultProps = {
+Line.defaultProps = {
   a11yTitleId: 'chart-title',
   a11yDescId: 'chart-desc',
   defaultHeight: 192,
