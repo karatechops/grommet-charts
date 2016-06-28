@@ -1,5 +1,3 @@
-@import 'grommet/scss/grommet-core/objects.meter';
-
 .chart-demo-spiral {
 	.grommetux-meter__value,
 	.grommetux-meter__tracks { display: none; }
@@ -31,4 +29,66 @@
     transition: stroke-width 0.2s;
     @include animation('draw-arc 1.5s ease-out');
   }
+}
+
+.chart-demo-bar-multi {
+
+	.chart-demo-bar {
+		width: 100%;
+
+		@media(min-width: 45em) { max-width: 210px; }
+	}
+
+	.grommetux-legend {
+		text-align: center;
+
+		li:first-child { padding-left: 0; }
+	}
+
+	.grommetux-legend__item {
+		padding-left: 15px;
+		display: inline-block;
+
+		.grommetux-legend__item-label {
+			min-width: auto;
+			color: #fff;
+		}
+	}
+}
+
+.chart-demo-bar {
+	.grommetux-heading {
+		padding: 0;
+		margin: 0;
+	}
+
+	.grommetux-meter--bar:not(.grommetux-meter--vertical) {
+		.grommetux-meter__value-container,
+		.grommetux-meter__graphic-container,
+		.grommetux-meter__graphic {
+			width: 100%;
+			height: auto;
+		}
+	}
+
+	.grommetux-meter--bar.grommetux-meter--vertical .grommetux-meter__value,
+	.grommetux-meter--bar:not(.grommetux-meter--vertical) .grommetux-meter__value {
+		display: none;
+	}
+
+	.grommetux-meter__slice {
+		stroke-width: 10px;
+	}
+
+	.grommetux-meter__tracks {
+		display: none;
+	}
+
+	.grommetux-meter--active {
+		path:not(.grommetux-meter__slice--active) {
+			opacity: 0.5;
+		}
+
+		.grommetux-meter__slice--active { stroke-width: 15px; }
+	}
 }

@@ -42,11 +42,11 @@
   }
 }
 
-.carousel {
+.grommetux-carousel {
 	width: 100%;
 	overflow: visible;
 
-	.carousel__control {
+	.grommetux-carousel__control {
 		stroke: nth($brand-accent-colors, 1);
 		stroke-width: 2px;
 		-webkit-filter: none;
@@ -55,27 +55,27 @@
 		width: 23px;
 	}
 
-	.carousel__control--active {
+	.grommetux-carousel__control--active {
     stroke: nth($brand-accent-colors, 1);
     fill: nth($brand-accent-colors, 1);
 	}
 
-	.button__icon {
+	.grommetux-button__icon {
 		padding: 8px;
 	}
 
-	.control-icon--large {
+	.grommetux-control-icon--large {
 		width: 40px;
 		height: 40px;
 	}
 
-	.carousel__arrow {
+	.grommetux-carousel__arrow {
 		background: rgba(255, 255, 255, 0.1);
     border-radius: 50px;
 		z-index: 5;
 		@media(max-width: 45em) { display: none; }
 
-		.control-icon {
+		.grommetux-control-icon {
 	    width: 25px;
     	height: 25px;
 			transition: all 0.3s;
@@ -87,39 +87,39 @@
       }
 		}
 
-		&.carousel__arrow--next {
+		&.grommetux-carousel__arrow--next {
 			margin-right: 30px;
 			@include carousel-reveal-next(0.3s, 0s);
 		}
 
-		&.carousel__arrow--prev {
+		&.grommetux-carousel__arrow--prev {
 			margin-left: 30px;
 			@include carousel-reveal-prev(0.3s, 0s);
 		}
 	}
 
-	.carousel__arrow--next:hover {
+	.grommetux-carousel__arrow--next:hover {
 		transform: translateX(3px) translateY(calc(-50%));
     background: rgba(255, 255, 255, 0.2);
 	}
 
-	.carousel__arrow--prev:hover {
+	.grommetux-carousel__arrow--prev:hover {
 		transform: translateX(-3px) translateY(calc(-50%));
 	}
 
-  .carousel__arrow:hover {
+  .grommetux-carousel__arrow:hover {
     .button__icon polyline {
       background: rgba(255, 255, 255, 0.2);
       stroke: nth($brand-accent-colors, 1);
     }
   }
 
-	.carousel__track {
+	.grommetux-carousel__track {
 		transition: margin-left 0.8s;
 	}
 
 @media(min-width: 45em) {
-		.carousel__arrow .control-icon {
+		.grommetux-carousel__arrow .control-icon {
 			width: 34px;
 			height: 34px;
 			padding-left: 3px;

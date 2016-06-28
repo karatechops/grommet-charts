@@ -19,4 +19,12 @@
 		margin: 0;
 		padding: 0;
 	}
+
+	h2 {
+		font-size: 17px;
+
+		@media(min-width: 45em) {
+			font-size: 36px;
+		}
+	}
 }

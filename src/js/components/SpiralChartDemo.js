@@ -12,7 +12,7 @@ export default class SpiralChartDemo extends Component {
 
     this._onIndexUpdate = this._onIndexUpdate.bind(this);
     this.state = {
-      legend: {
+      chartLabel: {
         visible: false,
         units: '%',
         value: 0
@@ -26,39 +26,30 @@ export default class SpiralChartDemo extends Component {
 
     if (index !== null) {
       this.setState({
-        legend: {
+        chartLabel: {
           visible: true,
           units: '%',
           value: value
         },
         activeIndex: index
       });
-    } /*else if (index === null) {
-      this.setState({
-        legend: {
-          visible: false,
-          units: '%',
-          value: this.state.legend.value
-        },
-        activeIndex: null
-      });
-    }*/
+    }
   }
 
   render() {
-     // Will be converted to Inline Legend(?) component.
-    let legendTempRoot = 'infographic-legend';
-    let legendClasses = classnames([
-      legendTempRoot,
+     // Will be converted to Inline chartLabel(?) component.
+    let chartLabelTempRoot = 'charts-label';
+    let chartLabelClasses = classnames([
+      chartLabelTempRoot,
       {
-        [`${legendTempRoot}--active`]: this.state.legend.visible
+        [`${chartLabelTempRoot}--active`]: this.state.chartLabel.visible
       }
     ]);
 
-    let legend = (
-      <div className={legendClasses} ref="legend">
+    let chartLabel = (
+      <div className={chartLabelClasses} ref="chartLabel">
         <Heading strong={true} tag="h2">
-          {this.state.legend.value}<span className={`infographic-legend__unit`}>{this.state.legend.units}</span>
+          {this.state.chartLabel.value}<span className={`charts-label__unit`}>{this.state.chartLabel.units}</span>
         </Heading>
       </div>
     );
@@ -75,7 +66,7 @@ export default class SpiralChartDemo extends Component {
               "colorIndex": "graph-3"}
           ]} max={100} onIndexUpdate={this._onIndexUpdate} important={this.state.activeIndex}
           a11yTitleId="meter-title-17" a11yDescId="meter-desc-17" />
-          {legend}
+          {chartLabel}
         </Box>
       </div>
     );

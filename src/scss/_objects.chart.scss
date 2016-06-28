@@ -34,7 +34,19 @@
   }
 }
 
-@include keyframes(fade-in-scale-up) {
+@include keyframes(fade-in-scale-up-vertical) {
+  0% {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@include keyframes(fade-in-scale-up-horizontal) {
   0% {
     opacity: 0;
     transform: scale(0.1);
@@ -109,7 +121,13 @@
      .infographic-chart__lines,
      .infographic-chart__area {
         transform-origin: bottom;
-        @include animation('reveal-chart-horizontal 2s');
+        @include animation('reveal-chart-horizontal 0.75s ease-out');
+      }
+
+      .infographic-chart__point {
+        opacity: 0;
+        -webkit-animation: 'fade-in-scale-up-horizontal' 0.25s 0.5s 1 both ease-out;
+        animation: 'fade-in-scale-up-horizontal' 0.25s 0.5s 1 both ease-out;
       }
     }
 
@@ -149,7 +167,12 @@
      .infographic-chart__lines,
      .infographic-chart__area {
         transform-origin: left;
-        @include animation('reveal-chart-vertical 2s');
+        @include animation('reveal-chart-vertical 0.75s ease-out');
+      }
+
+      .infographic-chart__point {
+        -webkit-animation: 'fade-in-scale-up-vertical' 0.25s 0.5s 1 both ease-out;
+        animation: 'fade-in-scale-up-vertical' 0.25s 0.5s 1 both ease-out;
       }
     }
 
@@ -215,6 +238,6 @@
   fill: #425563;
   @include graph-stroke-color;
   transform-origin: center;
-  -webkit-animation: 'fade-in-scale-up' 1s 1.5s 1 both ease-out;
-  animation: 'fade-in-scale-up' 1s 1.5s 1 both ease-out;
+  -webkit-animation: none;
+  animation: none;
 }

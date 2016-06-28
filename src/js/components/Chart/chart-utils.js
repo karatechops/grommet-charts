@@ -244,8 +244,8 @@ export default {
         if (index === 0 && orientation === 'horizontal') x = radius / 2;
         if (index === coordinates.length - 1 && orientation === 'horizontal') 
           x = bounds.graphWidth + radius / 2;
-        //if (coordinate[1] <= 1) coordinate[1] = coordinate[1] + radius;
-        let animationDelay = 1.5 + (index * .1);
+        
+        let animationDelay = .5 + (index * .1);
 
         pointsPaths.push(
           <circle key={`series${seriesIndex}-${index}`}

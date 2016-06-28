@@ -19,7 +19,7 @@ export default class AreaChartDemo extends Component {
 
     window.addEventListener('resize', this._onWindowResize);
     this.state = {
-      legend: {
+      chartLabel: {
         value: '0',
         axisValue: '0',
         units: ' ',
@@ -42,23 +42,23 @@ export default class AreaChartDemo extends Component {
   _onClick(event) {
     let target = event.target;
     let targetNodeRect = ReactDOM.findDOMNode(target).getBoundingClientRect();
-    this._updateLegend(event, targetNodeRect);
+    this._updateChartLabel(event, targetNodeRect);
   }
 
   _onMouseOver(event) {
     let target = event.target;
     let targetNodeRect = ReactDOM.findDOMNode(target).getBoundingClientRect();
-    this._updateLegend(target, targetNodeRect);
+    this._updateChartLabel(target, targetNodeRect);
   }
 
   _onMouseOut(event) {
     this.setState({
-      legend: {
-        value: this.state.legend.value,
-        axisValue: this.state.legend.axisValue,
-        units: this.state.legend.units,
-        axisUnits: this.state.legend.axisUnits,
-        top: this.state.legend.top,
+      chartLabel: {
+        value: this.state.chartLabel.value,
+        axisValue: this.state.chartLabel.axisValue,
+        units: this.state.chartLabel.units,
+        axisUnits: this.state.chartLabel.axisUnits,
+        top: this.state.chartLabel.top,
         visible: false
       }
     });
@@ -77,19 +77,19 @@ export default class AreaChartDemo extends Component {
     });
   }
 
-  _updateLegend(target, targetRect) {
+  _updateChartLabel(target, targetRect) {
     let top = (this.state.layout === 'horizontal') 
       ? targetRect.height + 40 // add Axis height.
       : Number(target.getAttribute('y')) + (targetRect.height /2) + 1;
-      //console.log('targetRect height', targetRect.height);
+
     // Demo purposes, adjust for dynamic placement.
-    let legendRect = this.refs.legend.getBoundingClientRect();
-    console.log(legendRect.height);
+    let labelRect = this.refs.chartLabel.getBoundingClientRect();
+
     if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') 
-      top = Number(target.getAttribute('y')) - (legendRect.height - 3);
+      top = Number(target.getAttribute('y')) - (labelRect.height - 3);
 
     this.setState({
-      legend: {
+      chartLabel: {
         value: target.getAttribute('data-value'),
         axisValue: target.getAttribute('data-axis-value'),
         units: target.getAttribute('data-units'),
@@ -107,27 +107,27 @@ export default class AreaChartDemo extends Component {
   }
 
   render() {
-    // Will be converted to Inline Legend(?) component.
-    let legendTempRoot = 'infographic-legend';
-    let legendClasses = classnames([
-      legendTempRoot,
-      `${legendTempRoot}--${this.state.layout}`,
-      `${legendTempRoot}--inline`,
+    // Will be converted to Inline Label(?) component.
+    let chartLabelTempRoot = 'charts-label';
+    let chartLabelClasses = classnames([
+      chartLabelTempRoot,
+      `${chartLabelTempRoot}--${this.state.layout}`,
+      `${chartLabelTempRoot}--inline`,
       {
-        [`${legendTempRoot}--active`]: this.state.legend.visible
+        [`${chartLabelTempRoot}--active`]: this.state.chartLabel.visible
       }
     ]);
-    let legendStyle = {
-      top: this.state.legend.top
+    let chartLabelStyle = {
+      top: this.state.chartLabel.top
     };
 
-    let legend = (
-      <div style={legendStyle} className={legendClasses} ref="legend">
+    let chartLabel = (
+      <div style={chartLabelStyle} className={chartLabelClasses} ref="chartLabel">
         <Heading strong={true} tag="h5">
-          {this.state.legend.axisValue} {this.state.legend.axisUnits}
+          {this.state.chartLabel.axisValue} {this.state.chartLabel.axisUnits}
         </Heading>
         <Heading strong={true} tag="h2">
-          {this.state.legend.value}<span className={`infographic-legend__unit`}>{this.state.legend.units}</span>
+          {this.state.chartLabel.value}<span className={`charts-label__unit`}>{this.state.chartLabel.units}</span>
         </Heading>
       </div>
     );
@@ -137,14 +137,14 @@ export default class AreaChartDemo extends Component {
       : (
           <Box align="center" justify="center" direction="row" pad="small">
             <Summary value={this.props.series[0].values} units="M" title={this.props.series[0].label}
-              visible={this.state.legend.visible}/>
+              visible={this.state.chartLabel.visible}/>
           </Box>
         );
 
     let desktopSummary = (this.state.layout === 'horizontal') 
       ? (
         <Summary value={this.props.series[0].values} units="M" title={this.props.series[0].label}
-            visible={this.state.legend.visible}/>
+            visible={this.state.chartLabel.visible}/>
       ) : null;
 
     let axis = (
@@ -163,7 +163,7 @@ export default class AreaChartDemo extends Component {
           <Box direction="column">
             <div className="chart-demo__container" style={{position:'relative'}}>
               <div style={{position:'relative'}}>
-                {legend}
+                {chartLabel}
                 <Area series={this.props.series}
                   orientation={this.state.layout}
                   onClick={this._onClick}
@@ -171,7 +171,7 @@ export default class AreaChartDemo extends Component {
                   onMouseOut={this._onMouseOut}
                   onResize={this._onChartResize}
                   min={2.5}
-                  a11yTitleId="lineClickableChartTitle" a11yDescId="lineClickableChartDesc" />
+                  a11yTitleId="areaClickableChartTitle" a11yDescId="areaClickableChartDesc" />
               </div>
               {axis}
           </div>
