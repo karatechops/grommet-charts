@@ -19,8 +19,14 @@
 }
 
 .chart-demo-spiral {
-	.grommetux-meter__value,
-	.grommetux-meter__tracks { display: none; }
+	.grommetux-meter__value { display: none; }
+
+	.grommetux-meter__tracks {
+		display: inline;
+		opacity: 0.3;
+
+		path { stroke-width: 4px; }
+	}
 
 	.grommetux-meter__labels text { fill: #fff; }
 	.grommetux-meter__slice {
