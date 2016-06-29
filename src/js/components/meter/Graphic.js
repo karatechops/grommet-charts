@@ -128,6 +128,7 @@ export default class Graphic extends Component {
       //stop event propagation
       return true;
     }
+    return false;
   }
 
   _onRequestForNextLegend (event) {
@@ -146,6 +147,7 @@ export default class Graphic extends Component {
       //stop event propagation
       return true;
     }
+    return false;
   }
 
   _onEnter (event) {
