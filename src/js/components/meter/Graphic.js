@@ -305,7 +305,7 @@ export default class Graphic extends Component {
         height={this.state.viewBoxHeight}
         viewBox={"0 0 " + this.state.viewBoxWidth +
           " " + this.state.viewBoxHeight}
-        preserveAspectRatio="xMidYMid slice"
+        preserveAspectRatio="none"
         aria-activedescendant={activeDescendant}
         aria-labelledby={this.props.a11yTitleId + ' ' + this.props.a11yDescId}>
         <title id={this.props.a11yTitleId}>
