@@ -34,10 +34,6 @@ export default class Home extends Component {
         <HomeSection primary={true} colorIndex="neutral-1">
           <div className="tabs-container">
             <Tabs>
-              <Tab title="Stacked Bar Chart">
-                <Headline>Stacked Bar Chart</Headline>
-                <StackedBarChartDemo />
-              </Tab>
               <Tab title="Multi Area Chart">
                 <Headline>Multi Area Chart</Headline>
                 <Box direction="row" justify="between">
@@ -96,6 +92,10 @@ export default class Home extends Component {
               <Tab title="Multi Bar Chart">
                 <Headline>Multi Bar Chart</Headline>
                 <MultiBarChartDemo />
+              </Tab>
+              <Tab title="Stacked Bar Chart">
+                <Headline>Stacked Bar Chart</Headline>
+                <StackedBarChartDemo />
               </Tab>
               <Tab title="Line Chart">
                 <Headline>Line Chart</Headline>

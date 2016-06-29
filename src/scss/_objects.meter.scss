@@ -60,7 +60,9 @@
 	.grommetux-meter--bar:not(.grommetux-meter--vertical) {
 		.grommetux-meter__value-container,
 		.grommetux-meter__graphic-container,
-		.grommetux-meter__graphic {
+		.grommetux-meter__graphic,
+		.grommetux-meter__values,
+		.grommetux-meter__tracks {
 			width: 100%;
 			height: auto;
 		}
