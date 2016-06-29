@@ -128,7 +128,9 @@ export default class Axis extends Component {
       : textPadding;
 
     let lines = this._renderLines(height, width, this.props.count - 1);
-    let text = this._renderText(this.props.label, this.props.count - 1);
+    let text = (this.props.label) 
+      ? this._renderText(this.props.label, this.props.count - 1)
+      : null;
 
     return (
       <div className={classes}>

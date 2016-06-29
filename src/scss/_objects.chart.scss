@@ -1,23 +1,19 @@
 @include keyframes(reveal-chart-horizontal) {
   0% {
-    opacity: 0;
     transform: scaleY(0);
   }
 
   100% {
-    opacity: 1;
     transform: scaleY(1);
   }
 }
 
 @include keyframes(reveal-chart-vertical) {
   0% {
-    opacity: 0;
     transform: scaleX(0);
   }
 
   100% {
-    opacity: 1;
     transform: scaleX(1);
   }
 }
@@ -92,6 +88,12 @@
 
   // Allow points to overflow chart bounds.
   .infographic-chart__graphic { overflow: visible; }
+
+  &.infographic-chart--layered {
+    .infographic-chart__values-area {
+      @include graph-fill-color-translucent(0.45);
+    }
+  }
 
   &.infographic-chart--horizontal {
     &.infographic-chart--small {

@@ -7,11 +7,12 @@ import Headline from 'grommet/components/Headline';
 import Tabs from 'grommet/components/Tabs';
 import Tab from 'grommet/components/Tab';
 import Box from 'grommet/components/Box';
-//import Carousel from 'grommet/components/Carousel';
 import AreaChartDemo from './AreaChartDemo';
 import LineChartDemo from './LineChartDemo';
 import SpiralChartDemo from './SpiralChartDemo';
 import MultiBarChartDemo from './MultiBarChartDemo';
+import StackedBarChartDemo from './StackedBarChartDemo';
+import LayeredAreaChart from './LayeredAreaChart';
 
 class HomeSection extends Component {
   render() {
@@ -33,9 +34,9 @@ export default class Home extends Component {
         <HomeSection primary={true} colorIndex="neutral-1">
           <div className="tabs-container">
             <Tabs>
-              <Tab title="Multi Bar Chart">
-                <Headline>Multi Bar Chart</Headline>
-                <MultiBarChartDemo />
+              <Tab title="Stacked Bar Chart">
+                <Headline>Stacked Bar Chart</Headline>
+                <StackedBarChartDemo />
               </Tab>
               <Tab title="Multi Area Chart">
                 <Headline>Multi Area Chart</Headline>
@@ -87,6 +88,14 @@ export default class Home extends Component {
                         {position: 1, value: '51'}]
                     }} />
                 </Box>
+              </Tab>
+              <Tab title="Layered Area Chart">
+                <Headline>Layered Area Chart</Headline>
+                <LayeredAreaChart />
+              </Tab>
+              <Tab title="Multi Bar Chart">
+                <Headline>Multi Bar Chart</Headline>
+                <MultiBarChartDemo />
               </Tab>
               <Tab title="Line Chart">
                 <Headline>Line Chart</Headline>

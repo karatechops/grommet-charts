@@ -14,6 +14,7 @@ export default class AreaChartDemo extends Component {
     this._onClick = this._onClick.bind(this);
     this._onMouseOver = this._onMouseOver.bind(this);
     this._onMouseOut = this._onMouseOut.bind(this);
+    this._onIndexUpdate = this._onIndexUpdate.bind(this);
     this._onWindowResize = this._onWindowResize.bind(this);
     this._onChartResize = this._onChartResize.bind(this);
 
@@ -25,6 +26,7 @@ export default class AreaChartDemo extends Component {
         units: ' ',
         axisUnits: ' ',
         top: 0,
+        left: 0,
         visible: false
       },
       chart: {
@@ -64,6 +66,15 @@ export default class AreaChartDemo extends Component {
     });
   }
 
+  _onIndexUpdate(index) {
+    //console.log('heyo!');
+    // For single series charts only.
+    /*console.log(this.props.series[0].values[index]);
+    console.log(this.props.series[0].axisValues[index]);
+    console.log(this.props.series[0].units);
+    console.log(this.props.series[0].axisValuesUnits);*/
+  }
+
   _onWindowResize() {
     this.setState({ layout:this._mobileRespond(window.innerWidth) });
   }
@@ -79,14 +90,18 @@ export default class AreaChartDemo extends Component {
 
   _updateChartLabel(target, targetRect) {
     let top = (this.state.layout === 'horizontal') 
-      ? targetRect.height + 40 // add Axis height.
+      ?  targetRect.height + 40 // add Axis height.
       : Number(target.getAttribute('y')) + (targetRect.height /2) + 1;
+
+    let left = (this.state.layout === 'horizontal')
+      ? Number(target.getAttribute('x')) + 1
+      : 0;
 
     // Demo purposes, adjust for dynamic placement.
     let labelRect = this.refs.chartLabel.getBoundingClientRect();
 
     if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') 
-      top = Number(target.getAttribute('y')) - (labelRect.height - 3);
+      top = Number(target.getAttribute('y')) - (labelRect.height - 6);
 
     this.setState({
       chartLabel: {
@@ -95,6 +110,7 @@ export default class AreaChartDemo extends Component {
         units: target.getAttribute('data-units'),
         axisUnits: target.getAttribute('data-axis-units'),
         top: top,
+        left: left,
         visible: true
       }
     });
@@ -119,6 +135,7 @@ export default class AreaChartDemo extends Component {
     ]);
     let chartLabelStyle = {
       top: this.state.chartLabel.top
+      // Todo: add left positioning. 
     };
 
     let chartLabel = (
@@ -135,16 +152,16 @@ export default class AreaChartDemo extends Component {
     let mobileSummary = (this.state.layout === 'horizontal')
       ? null
       : (
-          <Box align="center" justify="center" direction="row" pad="small">
-            <Summary value={this.props.series[0].values} units="M" title={this.props.series[0].label}
-              visible={this.state.chartLabel.visible}/>
+          <Box className="summary__mobile-container" align="center" justify="center" direction="row" pad="small">
+            <Summary value={this.props.series[0].values} units="M" 
+              title={this.props.series[0].label} />
           </Box>
         );
 
     let desktopSummary = (this.state.layout === 'horizontal') 
       ? (
         <Summary value={this.props.series[0].values} units="M" title={this.props.series[0].label}
-            visible={this.state.chartLabel.visible}/>
+            visible={!this.state.chartLabel.visible}/>
       ) : null;
 
     let axis = (
@@ -160,7 +177,7 @@ export default class AreaChartDemo extends Component {
     return (
       <div className="chart-demo chart-demo-multi-area">
         {mobileSummary}
-          <Box direction="column">
+          <Box direction="column" responsive={false}>
             <div className="chart-demo__container" style={{position:'relative'}}>
               <div style={{position:'relative'}}>
                 {chartLabel}
@@ -170,6 +187,7 @@ export default class AreaChartDemo extends Component {
                   onMouseOver={this._onMouseOver}
                   onMouseOut={this._onMouseOut}
                   onResize={this._onChartResize}
+                  onIndexUpdate={this._onIndexUpdate}
                   min={2.5}
                   a11yTitleId="areaClickableChartTitle" a11yDescId="areaClickableChartDesc" />
               </div>

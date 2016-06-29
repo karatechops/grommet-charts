@@ -3,6 +3,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import utils from './chart-utils';
+import KeyboardAccelerators from 'grommet/utils/KeyboardAccelerators';
 
 const CLASS_ROOT = "infographic-chart";
 
@@ -20,6 +21,8 @@ export default class Line extends Component {
     this._layout = this._layout.bind(this);
     this._getBoundsGuides = this._getBoundsGuides.bind(this);
     this._stateFromProps = this._stateFromProps.bind(this);
+    this._incrementActiveIndex = this._incrementActiveIndex.bind(this);
+    this._decrementActiveIndex = this._decrementActiveIndex.bind(this);
 
     this.state = this._stateFromProps(props, {height: props.defaultHeight, 
       width: props.defaultWidth});
@@ -27,16 +30,31 @@ export default class Line extends Component {
 
   componentDidMount () {
     window.addEventListener('resize', this._onResize);
+    this._keyboardHandlers = {
+      left: () => this._decrementActiveIndex(this.state.activeIndex),
+      up: () => this._decrementActiveIndex(this.state.activeIndex),
+      right: () => this._incrementActiveIndex(this.state.activeIndex),
+      down: () => this._incrementActiveIndex(this.state.activeIndex)
+    };
+
+    KeyboardAccelerators.startListeningToKeyboard(
+      this, this._keyboardHandlers
+    );
     this._onResize();
   }
 
-  componentDidUpdate () {
+  componentDidUpdate (prevProps, prevState) {
     this._layout();
+    if (prevState.activeIndex !== this.state.activeIndex && this.props.onIndexUpdate)
+      this.props.onIndexUpdate(this.state.activeIndex);
   }
 
   componentWillUnmount () {
     clearTimeout(this._resizeTimer);
     window.removeEventListener('resize', this._onResize);
+    KeyboardAccelerators.stopListeningToKeyboard(
+      this, this._keyboardHandlers
+    );
   } 
 
   // Generates state based on the provided props.
@@ -88,6 +106,22 @@ export default class Line extends Component {
     this._resizeTimer = setTimeout(this._layout, 50);
   }
 
+  _incrementActiveIndex(index) {
+    if (index < this.props.series[0].values.length - 1) {
+      this.setState({ 
+        activeIndex: Number(index) + 1 
+      });
+    }
+  }
+
+  _decrementActiveIndex(index) {
+    if (index > 0) {
+      this.setState({ 
+        activeIndex: Number(index) - 1 
+      });
+    }
+  }
+
   // Initial bounds calculations.
   _getBoundsGuides(elem = null) {
     let rect = {
@@ -134,14 +168,13 @@ export default class Line extends Component {
       {
         // Todo: Add size classes
         [`${CLASS_ROOT}--${this.state.size}`]: this.state.size,
-        [`${CLASS_ROOT}--active`]: this.state.active
+        [`${CLASS_ROOT}--active`]: this.state.active,
+        [`${CLASS_ROOT}--layered`]: this.props.series.length > 1
       }
     ]);
 
-    let lines = utils.getLinePaths(this.state.bounds, this.props);
-    // Seperate out Line and Area components when complete.
-    //let lines = utils.getAreaPaths(this.state.bounds, this.props);
-    let lineGroup = (<g className={`${CLASS_ROOT}__lines`}>{lines}</g>);
+    let area = utils.getLinePaths(this.state.bounds, this.props);
+    let areaGroup = (<g className={`${CLASS_ROOT}__area`}>{area}</g>);
 
     let points = (this.props.points) 
       ? utils.getPointPaths(this.state.bounds, this.props, POINT_RADIUS)
@@ -161,7 +194,7 @@ export default class Line extends Component {
 
     let activeDescendant;
 
-    let a11yTitle = utils.getA11YTitle(this.props.a11yTitle, this.context.intl, 'line');
+    let a11yTitle = utils.getA11YTitle(this.props.a11yTitle, this.context.intl, 'area');
     let a11yTitleNode;
     if (a11yTitle) {
       a11yTitleNode = (
@@ -187,7 +220,7 @@ export default class Line extends Component {
           aria-labelledby={this.props.a11yTitleId + ' ' + this.props.a11yDescId} >
           {a11yTitleNode}
           {a11yDescNode}
-          <g className={`${CLASS_ROOT}__values`}>{lineGroup}{pointGroup}</g>
+          <g className={`${CLASS_ROOT}__values`}>{areaGroup}{pointGroup}</g>
           <g>{cursor}</g>
           <g className={`${CLASS_ROOT}__hotspots`}>{rectangleHotspots}</g>
         </svg>
@@ -211,6 +244,7 @@ Line.propTypes = {
   min: PropTypes.number,
   orientation: PropTypes.oneOf(['horizontal', 'vertical']),
   onClick: PropTypes.func,
+  onIndexUpdate: PropTypes.func,
   points: PropTypes.bool,
   pointsRadius: PropTypes.number,
   series: PropTypes.arrayOf(

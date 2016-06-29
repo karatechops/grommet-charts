@@ -80,7 +80,7 @@ export default {
     let scaleX = (graphWidth / spanX);
     let stepWidth = (orientation === 'horizontal') 
       ? Math.round(graphWidth / (valueCount - 1)) 
-      : Math.round(graphWidth / (valueCount - 1));
+      : Math.round(graphHeight / (valueCount - 1));
 
     let scaleY = (graphHeight / spanY);
 
@@ -334,58 +334,56 @@ export default {
   getHotspots (bounds, {series, valueCount, orientation}, 
     a11yTitleId, onClick, onMouseOver, onMouseOut) {
     let className = `${CLASS_ROOT}__front`;
-    let hotspots = series.map((item, index) => {
-      let values = item.values.map((value, valueIndex) => {
-        let y = (orientation === 'horizontal') 
+    let hotspots = series[0].values.map((value, valueIndex) => {
+      let item = series[0];
+      let y = (orientation === 'horizontal') 
         ? 0
         // Subtract max Y value to reverse order
         // this aligns values correctly for vertical.
         : this._translateY((bounds.maxY - valueIndex), bounds) - (bounds.stepWidth / 2);
-        let x = (orientation === 'horizontal') 
+      let x = (orientation === 'horizontal') 
         ? this._translateX(valueIndex, bounds) - (bounds.stepWidth / 2)
         : 0;
+        
+      let width = (orientation === 'horizontal') 
+        ? bounds.stepWidth : bounds.graphWidth;
+      let height = (orientation === 'horizontal')
+        ? bounds.graphHeight : bounds.stepWidth;
 
-        let width = (orientation === 'horizontal') 
-          ? bounds.stepWidth : bounds.graphWidth;
-        let height = (orientation === 'horizontal')
-          ? bounds.graphHeight : bounds.stepWidth;
+      let hotspotId = `${a11yTitleId}_hotspot_${valueIndex}`;
+      let hotspotTitleId = `${a11yTitleId}_hotspot_title_${valueIndex}`;
+      let dataValue = value;
+      let axisValue = (item.axisValues !== undefined) 
+        ? item.axisValues[valueIndex] : valueIndex;
+      let units = (item.units !== undefined) 
+        ? item.units : '';
+      let axisValuesUnits = (item.axisValuesUnits !== undefined) 
+        ? item.axisValuesUnits : '';
 
-        let hotspotId = `${a11yTitleId}_x_band_${valueIndex}`;
-        let hotspotTitleId = `${a11yTitleId}_x_band_title_${valueIndex}`;
-        let dataValue = value;
-        let axisValue = (item.axisValues !== undefined) 
-          ? item.axisValues[valueIndex] : valueIndex;
-        let units = (item.units !== undefined) 
-          ? item.units : '';
-        let axisValuesUnits = (item.axisValuesUnits !== undefined) 
-          ? item.axisValuesUnits : '';
-
-        // Clean up outter most hot spots. Add thumb padding.
-        if (valueIndex === 0 || valueIndex === item.values.length -1) {
-          let thumbPadding = 5;
-          if (orientation === 'horizontal' && valueIndex === 0) {
-            x = x + (bounds.stepWidth / 2) - thumbPadding;
-            width = thumbPadding + (width / 2);
-          }
-          if (orientation === 'vertical' && valueIndex === 0) {
-            y = (y + (bounds.stepWidth / 2)) - thumbPadding;
-            height = thumbPadding + (height / 2);
-          }
+      // Clean up outter most hot spots. Add thumb padding.
+      if (valueIndex === 0 || valueIndex === item.values.length -1) {
+        let thumbPadding = 5;
+        if (orientation === 'horizontal' && valueIndex === 0) {
+          x = x + (bounds.stepWidth / 2) - thumbPadding;
+          width = thumbPadding + (width / 2);
         }
+        if (orientation === 'vertical' && valueIndex === 0) {
+          y = (y + (bounds.stepWidth / 2)) - thumbPadding;
+          height = thumbPadding + (height / 2);
+        }
+      }
 
-        return (
-          <g key={hotspotId} id={hotspotId} role="tab"
-            aria-labelledby={hotspotTitleId} onClick={onClick}
-            onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
-            <title id={hotspotTitleId}></title>
-            <rect role="presentation" className={`${className}-xband-background`}
-              x={x} y={y} width={width} height={height} data-index={valueIndex}
-              data-value={dataValue} data-units={units}
-              data-axis-value={axisValue} data-axis-units={axisValuesUnits}/>
-          </g>
-        );
-      });
-      return values;
+      return (
+        <g key={hotspotId} id={hotspotId} role="tab"
+          aria-labelledby={hotspotTitleId} onClick={onClick}
+          onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
+          <title id={hotspotTitleId}></title>
+          <rect role="presentation" className={`${className}-hotspot-background`}
+            x={x} y={y} width={width} height={height} data-index={valueIndex}
+            data-value={dataValue} data-units={units}
+            data-axis-value={axisValue} data-axis-units={axisValuesUnits}/>
+        </g>
+      );
     });
 
     return (

@@ -6,7 +6,6 @@
 @import 'grommet/scss/hpe/objects.button-hpe';
 @import 'objects.chart';
 @import 'objects.charts-label';
-@import 'objects.infographic-legend';
 @import 'objects.summary';
 @import 'objects.axis';
 @import 'objects.carousel';
@@ -85,11 +84,27 @@
   }
 }
 
+.chart-demo-bar-multi {
+
+	.chart-demo-bar {
+		width: 100%;
+
+		@media(min-width: 45em) {
+			max-width: 210px;
+		}
+	}
+}
+
 .chart-demo {
 	display: flex;
 	flex-grow: 1;
   align-items: center;
   justify-content: center;
+
+  .chart-demo__container {
+    display: flex;
+    flex-direction: column;
+  }
 
   &.chart-demo-multi-area {
 		@media(min-width: 45em) {
@@ -100,11 +115,46 @@
 	  .infographic-chart--active {
 	    .infographic-chart__values { opacity: 0.6; }
 	  }
+
+	  .chart-demo__container {
+	  	flex-direction: row-reverse;
+	  	@media(min-width: 45em) { flex-direction: column; }
+	  }
+
+	  .summary__mobile-container {
+	  	width: 20%;
+	  	min-width: 20%;
+	  }
+
+	  .charts-label {
+	  	@media(min-width: 45em) {
+		  	width: 100%;
+		  }
+	  }
+  }
+
+  &.chart-demo-layered-area {
+  	.infographic-chart { width: 100%; }
+  	.axis--horizontal { align-self: flex-end; }
+
+		// Todo: stepped opacity for same color layered
+		// area charts.
+  	li:first-child svg { opacity: 0.45; }
+  	li:nth-child(2) svg { opacity: 0.65; }
+  	li:nth-child(3) svg { opacity: 0.95; }
   }
 
   &.chart-demo-line {
   	.infographic-chart--vertical .infographic-chart__graphic {
   		min-height: 320px;
+  	}
+
+    .chart-demo__container {
+    	flex-direction: row-reverse;
+
+	    @media(min-width: 45em) {
+	    	flex-direction: column;
+	  	}
   	}
   }
 
@@ -121,15 +171,6 @@
     height: auto;
     width: 100%;
     min-width: 0;
-  }
-
-  .chart-demo__container {
-    display: flex;
-    flex-direction: row-reverse;
-
-    @media(min-width: 45em) {
-    	flex-direction: column;
-  	}
   }
 
   .infographics-legend {
@@ -225,37 +266,26 @@
 	}
 }
 
-.first-digital-natives {
+.grommetux-legend {
+	text-align: center;
 
-	.chart {
-		flex-grow: 0;
-		@media(min-width: 45em) { min-width: 375px; }
-	}
+	li:first-child { padding-left: 0; }
+}
 
-	.chart__graphic {
-    transform-origin: center center;
-		transform: rotate(90deg);
-		height: 270px;
-	}
+.grommetux-legend__item-value {
+	width: auto;
+  padding-left: 10px;
+  opacity: 0.6;
+}
 
-	.axis--vertical {
-		display: none;
-	}
+.grommetux-legend__item {
+	padding-left: 15px;
+	display: inline-block;
+	color: #fff;
 
-	@media(min-width: 45em) {
-		.chart__graphic {
-	    transform-origin: center center;
-  		transform: rotate(0deg);
-  		height: 192px;
-		}
-
-		.axis--vertical {
-			display: block;
-		}
-
-		.axis--horizontal {
-			display: none;
-		}
+	.grommetux-legend__item-label {
+		min-width: auto;
+		font-weight: 600;
 	}
 }
 

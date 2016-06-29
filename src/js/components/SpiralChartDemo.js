@@ -11,6 +11,8 @@ export default class SpiralChartDemo extends Component {
     super();
 
     this._onIndexUpdate = this._onIndexUpdate.bind(this);
+    this._onMouseLeave = this._onMouseLeave.bind(this);
+
     this.state = {
       chartLabel: {
         visible: false,
@@ -36,6 +38,17 @@ export default class SpiralChartDemo extends Component {
     }
   }
 
+  _onMouseLeave() {
+    this.setState({
+      chartLabel: {
+        visible: false,
+        units: '%',
+        value: this.state.chartLabel.value
+      },
+      activeIndex: null
+    });
+  }
+
   render() {
      // Will be converted to Inline chartLabel(?) component.
     let chartLabelTempRoot = 'charts-label';
@@ -56,13 +69,13 @@ export default class SpiralChartDemo extends Component {
 
     return (
       <div className="chart-demo chart-demo-spiral">
-        <Box direction="column">
+        <Box direction="column" onMouseLeave={this._onMouseLeave}>
           <Meter type="spiral" series={[
-            {"label": "Boomers", "value": seriesValues[0], 
+            {"label": "Boomers", "value": seriesValues[0],
               "colorIndex": "graph-1"},
-            {"label": "Gen X", "value": seriesValues[1], 
+            {"label": "Gen X", "value": seriesValues[1],
               "colorIndex": "graph-2"},
-            {"label": "Millennials", "value": seriesValues[2], 
+            {"label": "Millennials", "value": seriesValues[2],
               "colorIndex": "graph-3"}
           ]} max={100} onIndexUpdate={this._onIndexUpdate} important={this.state.activeIndex}
           a11yTitleId="meter-title-17" a11yDescId="meter-desc-17" />

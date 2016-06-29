@@ -24,6 +24,7 @@ export default class LineChartDemo extends Component {
         units: '',
         axisUnits: '',
         top: 0,
+        left: 0,
         visible: false
       },
       chart: {
@@ -58,6 +59,7 @@ export default class LineChartDemo extends Component {
         units: this.state.chartLabel.units,
         axisUnits: this.state.chartLabel.axisUnits,
         top: this.state.chartLabel.top,
+        left: this.state.chartLabel.left,
         visible: false
       }
     });
@@ -77,14 +79,25 @@ export default class LineChartDemo extends Component {
   }
 
   _updateChartLabel(target, targetRect) {
+    let chartLabelRect = this.refs.chartLabel.getBoundingClientRect();
+
     let top = (this.state.layout === 'horizontal') 
-      ? targetRect.height + 40 // add Axis height.
-      : Number(target.getAttribute('y')) + (targetRect.height /2) + 1;
+      ? targetRect.height - chartLabelRect.height // add Axis height.
+      : Number(target.getAttribute('y')) + (targetRect.height / 2) + 1;
+
+    let left = (this.state.layout === 'horizontal') 
+      ? Number(target.getAttribute('x')) + 1 + (targetRect.width / 2)
+      : 0;
 
     // Demo purposes, adjust for dynamic placement.
-    let chartLabelRect = this.refs.chartLabel.getBoundingClientRect();
-    if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') top = Number(target.getAttribute('y')) - (chartLabelRect.height - 8);
+    if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') 
+      top = Number(target.getAttribute('y')) - (chartLabelRect.height - 6);
 
+    if (target.getAttribute('data-index') >= 10 && this.state.layout === 'horizontal') 
+      left = Number(target.getAttribute('x') - 2); // Subtract line width of cursor.
+
+    if (target.getAttribute('data-index') == 0) left = 2;
+    
     this.setState({
       chartLabel: {
         value: target.getAttribute('data-value'),
@@ -92,6 +105,7 @@ export default class LineChartDemo extends Component {
         units: target.getAttribute('data-units'),
         axisUnits: target.getAttribute('data-axis-units'),
         top: top,
+        left: left,
         visible: true
       }
     });
@@ -115,7 +129,8 @@ export default class LineChartDemo extends Component {
       }
     ]);
     let chartLabelStyle = {
-      top: this.state.chartLabel.top
+      top: this.state.chartLabel.top,
+      left: this.state.chartLabel.left
     };
 
     let chartLabel = (

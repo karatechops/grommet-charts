@@ -10,16 +10,16 @@
 
   * { pointer-events: none; }
 
-  @media(min-width: 45em) {
-  	width: 100%;
-  }
-
   &.charts-label--vertical {
     text-align: left;
   }
 
   &.charts-label--active {
   	opacity: 1;
+
+    &.charts-label--inline {
+      opacity: 0.9;
+    }
   }
 
   &.charts-label--inline {

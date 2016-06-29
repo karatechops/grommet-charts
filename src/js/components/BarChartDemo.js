@@ -97,7 +97,7 @@ export default class BarChartDemo extends Component {
       <div className="chart-demo chart-demo-bar" onMouseLeave={this._onMouseLeave}>
         <Box direction="column">
           <Meter ref="barChart" vertical={vertical} series={this.props.series} max={100} onIndexUpdate={this._onIndexUpdate} units="%" 
-          important={this.state.activeIndex}
+          important={this.state.activeIndex} stacked={this.props.stacked}
           a11yTitleId="download-music-or-video" a11yDescId="bar-chart-desc" />
           <Heading strong={true} tag="h5">
             {this.props.title}
@@ -118,5 +118,10 @@ BarChartDemo.PropTypes = {
       units: PropTypes.string,
       value: PropTypes.number
     }).isRequired
-  )
+  ),
+  stacked: PropTypes.bool
+};
+
+BarChartDemo.defaultProps = {
+  stacked: false
 };

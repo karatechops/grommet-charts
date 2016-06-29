@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import Heading from 'grommet/components/Heading';
 
@@ -11,7 +11,7 @@ export default class Summary extends Component {
     let summaryClasses = classnames([
       'summary',
       {
-        'summary--active': !this.props.visible
+        'summary--active': this.props.visible
       }
     ]);
     
@@ -23,4 +23,15 @@ export default class Summary extends Component {
       </div>
     );
   }
+};
+
+Summary.PropTypes = {
+  title: PropTypes.string.isRequired,
+  value: PropTypes.arrayOf(PropTypes.number).isRequired,
+  units: PropTypes.string,
+  visible: PropTypes.bool
+};
+
+Summary.defaultProps = {
+  visible: true
 };
