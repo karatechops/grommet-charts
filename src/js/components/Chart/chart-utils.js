@@ -79,8 +79,8 @@ export default {
 
     let scaleX = (graphWidth / spanX);
     let stepWidth = (orientation === 'horizontal') 
-      ? Math.round(graphWidth / (valueCount - 1)) 
-      : Math.round(graphHeight / (valueCount - 1));
+      ? Math.round(graphWidth / (valueCount)) 
+      : Math.round(graphHeight / (valueCount));
 
     let scaleY = (graphHeight / spanY);
 
@@ -227,7 +227,7 @@ export default {
 
   _getValueString(series, index) {
     let string = series.map((singleSeries)=>{
-      return(`${singleSeries.label}: ${singleSeries.values[index]}${singleSeries.units}`);
+      return(`${singleSeries.label}: ${singleSeries.values[index]}${singleSeries.units} `);
     });
 
     return string;
