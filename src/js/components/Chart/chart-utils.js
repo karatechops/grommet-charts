@@ -225,6 +225,14 @@ export default {
     return commands;
   },
 
+  _getValueString(series, index) {
+    let string = series.map((singleSeries)=>{
+      return(`${singleSeries.label}: ${singleSeries.values[index]}${singleSeries.units}`);
+    });
+
+    return string;
+  },
+
   getPointPaths (bounds, {series, orientation, smooth, points}, radius) {
     let values = series.map((item, seriesIndex) => {
       let colorIndex = this._itemColorIndex(item, seriesIndex);
@@ -352,13 +360,8 @@ export default {
 
       let hotspotId = `${a11yTitleId}_hotspot_${valueIndex}`;
       let hotspotTitleId = `${a11yTitleId}_hotspot_title_${valueIndex}`;
-      let dataValue = value;
-      let axisValue = (item.axisValues !== undefined) 
-        ? item.axisValues[valueIndex] : valueIndex;
-      let units = (item.units !== undefined) 
-        ? item.units : '';
-      let axisValuesUnits = (item.axisValuesUnits !== undefined) 
-        ? item.axisValuesUnits : '';
+
+      let valueString = this._getValueString(series, valueIndex);
 
       // Clean up outter most hot spots. Add thumb padding.
       if (valueIndex === 0 || valueIndex === item.values.length -1) {
@@ -377,11 +380,9 @@ export default {
         <g key={hotspotId} id={hotspotId} role="tab"
           aria-labelledby={hotspotTitleId} onClick={onClick}
           onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
-          <title id={hotspotTitleId}></title>
+          <title id={hotspotTitleId}>{valueString}</title>
           <rect role="presentation" className={`${className}-hotspot-background`}
-            x={x} y={y} width={width} height={height} data-index={valueIndex}
-            data-value={dataValue} data-units={units}
-            data-axis-value={axisValue} data-axis-units={axisValuesUnits}/>
+            x={x} y={y} width={width} height={height} data-index={valueIndex} />
         </g>
       );
     });
@@ -397,6 +398,11 @@ export default {
   getCursor(bounds, {series, orientation, points}, activeIndex, colorIndex) {
     let value = series[0].values[activeIndex];
     let coordinates = this._coordinates(value, activeIndex, bounds, orientation);
+    // This gathers all coords for the active index 
+    // value to plot cursor points.
+    let activeIndexCoords = series.map((singleSeries) => {
+      return this._coordinates(singleSeries.values[activeIndex], activeIndex, bounds, orientation);
+    });
 
     // Offset it just a little if it is at an edge.
     let x1 = (orientation === 'horizontal')
@@ -408,12 +414,12 @@ export default {
       : bounds.graphRight;
 
     let y1 = (orientation === 'horizontal')
-    ? bounds.graphTop
-    : Math.max(1, Math.min(coordinates[1], bounds.graphHeight - 1));
+      ? bounds.graphTop
+      : Math.max(1, Math.min(coordinates[1], bounds.graphHeight - 1));
 
     let y2 = (orientation === 'horizontal')
-    ? bounds.graphBottom
-    : y1;
+      ? bounds.graphBottom
+      : y1;
 
     let linePath = (
       <line fill="none" x1={x1} y1={y1} x2={x2} y2={y2} />
@@ -421,16 +427,19 @@ export default {
 
     let pointColorIndex = colorIndex;
 
-    let pointPath = (
-      <circle key={`circle-${activeIndex}`}
-        className={`${CLASS_ROOT}__cursor-point grommetux-color-index-${pointColorIndex}`}
-        cx={coordinates[0]} cy={coordinates[1]} r={Math.round(POINT_RADIUS * 2.5)} />
-    );
+    let pointPaths = activeIndexCoords.map((coordSet, index) => {
+      let point = (
+          <circle key={`circle-${index}`}
+          className={`${CLASS_ROOT}__cursor-point grommetux-color-index-${pointColorIndex}`}
+          cx={coordSet[0]} cy={coordSet[1]} r={Math.round(POINT_RADIUS * 2.5)} />
+      );
+      return point;
+    });
 
     return (
       <g ref="cursor" role="presentation" className={`${CLASS_ROOT}__cursor`}>
         {linePath}
-        {pointPath}
+        {pointPaths}
       </g>
     );
   },

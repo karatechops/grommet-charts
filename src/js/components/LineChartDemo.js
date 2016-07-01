@@ -97,13 +97,19 @@ export default class LineChartDemo extends Component {
       left = Number(target.getAttribute('x') - 2); // Subtract line width of cursor.
 
     if (target.getAttribute('data-index') == 0) left = 2;
-    
+
+    let targetIndex = Number(target.getAttribute('data-index'));
+    let value = this.props.series[0].values[targetIndex];
+    let axisValue = this.props.series[0].axisValues[targetIndex];
+    let units = this.props.series[0].units;
+    let axisUnits = this.props.series[0].axisValuesUnits;
+
     this.setState({
       chartLabel: {
-        value: target.getAttribute('data-value'),
-        axisValue: target.getAttribute('data-axis-value'),
-        units: target.getAttribute('data-units'),
-        axisUnits: target.getAttribute('data-axis-units'),
+        value: value,
+        axisValue: axisValue,
+        units: units,
+        axisUnits: axisUnits,
         top: top,
         left: left,
         visible: true

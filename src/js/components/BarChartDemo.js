@@ -29,10 +29,6 @@ export default class BarChartDemo extends Component {
     window.removeEventListener('resize', this._onWindowResize);
   }
 
-  _onMouseOut() {
-    console.log('mouse out');
-  }
-
   _onIndexUpdate(index) {
     if (index !== null) {
       let value = this.props.series[index].value;
@@ -47,7 +43,9 @@ export default class BarChartDemo extends Component {
         },
         activeIndex: index
       });
-    } 
+    }
+
+    if (this.props.onIndexUpdate) this.props.onIndexUpdate(index, this.props.series);
   }
 
   _mobileRespond(windowWidth) {
@@ -93,17 +91,46 @@ export default class BarChartDemo extends Component {
 
     let vertical = (this.state.layout === 'vertical') ? false : true;
 
-    return (
-      <div className="chart-demo chart-demo-bar" onMouseLeave={this._onMouseLeave}>
+    let classes = classnames([
+      `chart-demo`,
+      `chart-demo-bar`,
+      {
+        [`chart-demo-bar--stacked`] : this.props.stacked
+      }
+    ]);
+
+    let chartLayout = (this.state.layout !== 'vertical') 
+      ? (
         <Box direction="column">
           <Meter ref="barChart" vertical={vertical} series={this.props.series} max={100} onIndexUpdate={this._onIndexUpdate} units="%" 
-          important={this.state.activeIndex} stacked={this.props.stacked}
-          a11yTitleId="download-music-or-video" a11yDescId="bar-chart-desc" />
-          <Heading strong={true} tag="h5">
-            {this.props.title}
-          </Heading>
-          {chartLabel}
+            important={this.state.activeIndex} stacked={this.props.stacked}
+            a11yTitleId="download-music-or-video" a11yDescId="bar-chart-desc" />
+            <Heading strong={true} tag="h5">
+              {this.props.title}
+            </Heading>
+            {chartLabel}
         </Box>
+      ) 
+      : (
+        <Box direction="column">
+          <Box className="chart-demo-bar--small" direction="row" align="center" justify="center">
+            <Box direction="column">
+              <Meter ref="barChart" vertical={vertical} series={this.props.series} max={100} onIndexUpdate={this._onIndexUpdate} units="%" 
+                important={this.state.activeIndex} stacked={this.props.stacked}
+                a11yTitleId="download-music-or-video" a11yDescId="bar-chart-desc" />
+
+              <Heading strong={true} tag="h5">
+                {this.props.title}
+              </Heading>
+            </Box>
+            {chartLabel}
+          </Box>
+        </Box>
+      );
+
+    return (
+      <div className={classes} onMouseLeave={this._onMouseLeave}>
+        {chartLayout}
       </div>
     );
   }
@@ -119,7 +146,8 @@ BarChartDemo.PropTypes = {
       value: PropTypes.number
     }).isRequired
   ),
-  stacked: PropTypes.bool
+  stacked: PropTypes.bool,
+  onIndexUpdate: PropTypes.func
 };
 
 BarChartDemo.defaultProps = {

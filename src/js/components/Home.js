@@ -13,6 +13,7 @@ import SpiralChartDemo from './SpiralChartDemo';
 import MultiBarChartDemo from './MultiBarChartDemo';
 import StackedBarChartDemo from './StackedBarChartDemo';
 import LayeredAreaChart from './LayeredAreaChart';
+import DonutChartDemo from './DonutChartDemo';
 
 class HomeSection extends Component {
   render() {
@@ -126,6 +127,10 @@ export default class Home extends Component {
               <Tab title="Spiral Chart">
                 <Headline>Spiral Chart</Headline>
                 <SpiralChartDemo />
+              </Tab>
+              <Tab title="Donut Chart">
+                <Headline>Donut Chart</Headline>
+                <DonutChartDemo />
               </Tab>
             </Tabs>
           </div>

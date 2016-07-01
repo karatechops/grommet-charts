@@ -3,8 +3,6 @@ import classnames from 'classnames';
 
 const CLASS_ROOT = "axis";
 const MARKER_SIZE = 4;
-// Ideally we could avoid the below constants
-// and let css define.
 const FONT_SIZE = 14;
 const DEFAULT_PADDING = 50;
 
@@ -25,6 +23,7 @@ export default class Axis extends Component {
         // Todo: Allow for various point sizes. Adjust on the fly.
         // Determine offsets to keep text aligned on markers.
         let textAnchor = "end";
+
         if (labelPosition === 0) {
           labelOffset = (this.props.layout === 'horizontal') 
           ? 5
@@ -58,6 +57,17 @@ export default class Axis extends Component {
           ? textPos 
           : this.props.textPadding - MARKER_SIZE - 10;
 
+        // Adjust text's Y position to align top.
+        if (this.props.textAlign.x === 'top' && this.props.layout !== 'vertical') {
+          y = FONT_SIZE - 4;
+        }
+
+        // Adjust textys' X position to align right.
+        if (this.props.textAlign.y === 'right' && this.props.layout === 'vertical') {
+          x = MARKER_SIZE + 10;
+          textAnchor = "start";
+        }
+ 
         // Reverse labels for vertical layout.
         let text = (this.props.layout === 'vertical') 
           ? label.value
@@ -91,14 +101,24 @@ export default class Axis extends Component {
         ? this.props.textPadding : increment;
       let x2 = (this.props.layout === 'vertical') 
         ? this.props.textPadding - MARKER_SIZE : increment;
-      let y1 = (this.props.layout === 'vertical') 
-        //? increment : this.props.textPadding; // Todo: top align
+      let y1 = (this.props.layout === 'vertical')
         ? increment : 0;
-      let y2 = (this.props.layout === 'vertical') 
-        //? increment : this.props.textPadding - MARKER_SIZE; // Todo: top align
+      let y2 = (this.props.layout === 'vertical')
         ? increment : 0 + MARKER_SIZE;
       let distance = (this.props.layout === 'vertical') 
         ? nodeHeight : nodeWidth;
+
+      // Adjust lines for top aligned text.
+      if (this.props.textAlign.x === 'top' && this.props.layout !== 'vertical') {
+        y1 = FONT_SIZE;
+        y2 = FONT_SIZE + MARKER_SIZE;
+      }
+
+      // Adjust lines for right aligned text.
+      if (this.props.textAlign.y === 'right' && this.props.layout === 'vertical') {
+        x1 = 0;
+        x2 = MARKER_SIZE;
+      }
 
       lines.push(
         <line key={`${CLASS_ROOT}__label-marker-${i}`}
@@ -150,18 +170,26 @@ export default class Axis extends Component {
 
 Axis.PropTypes = {
   count: PropTypes.number,
+  distance: PropTypes.number,
+  layout: PropTypes.oneOf(['horizontal', 'vertical']),
   label: PropTypes.arrayOf(PropTypes.shape({
     position: PropTypes.number.isRequired,
     value: PropTypes.string.isRequired
   })),
   textPadding: PropTypes.number,
-  distance: PropTypes.number,
-  layout: PropTypes.oneOf(['horizontal', 'vertical'])
+  textAlign: PropTypes.shape({
+    x: PropTypes.oneOf(['top', 'bottom']), 
+    y: PropTypes.oneOf(['left', 'right']) 
+  })
 };
 
 Axis.defaultProps = {
   count: 5,
-  textPadding: DEFAULT_PADDING,
   distance: DEFAULT_PADDING,
-  layout: 'vertical'
+  textPadding: DEFAULT_PADDING,
+  layout: 'vertical',
+  textAlign: {
+    x: 'bottom',
+    y: 'left'
+  }
 };

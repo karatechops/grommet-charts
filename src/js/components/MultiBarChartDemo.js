@@ -1,32 +1,54 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+
+import Responsive from 'grommet/utils/Responsive';
+import classnames from 'classnames';
+
 import Legend from 'grommet/components/Legend';
 import Box from 'grommet/components/Box';
 import BarChartDemo from './BarChartDemo';
 import Axis from './Chart/Axis';
 
+const CLASS_ROOT = 'chart-demo-bar-multi';
+
 export default class MultiBarChartDemo extends Component {
   constructor() {
     super();
 
-    this._mobileRespond = this._mobileRespond.bind(this);
     this._onWindowResize = this._onWindowResize.bind(this);
+    this._onResponsive = this._onResponsive.bind(this);
+    this._onIndexUpdate = this._onIndexUpdate.bind(this);
     window.addEventListener('resize', this._onWindowResize);
 
     this.state = {
       chartSize: 192,
-      layout: this._mobileRespond(window.innerWidth)
+      layout: 'vertical',
+      activeIndex: null
     };
   }
 
   componentDidMount() {
+    this._responsive = Responsive.start(this._onResponsive);
+
     this.setState({
       chartSize: this._getChartSize(this.refs.chartContainer.refs.barChart)
     });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.layout !== this.state.layout) 
+      this.setState({chartSize: this._getChartSize(this.refs.chartContainer.refs.barChart) });
+  }
+
   componentWillUnmount() {
+    this._responsive.stop();
     window.removeEventListener('resize', this._onWindowResize);
+  }
+
+  _onResponsive (small) {
+    this.setState({
+      layout: (small) ? 'horizontal' : 'vertical'
+    });
   }
 
   _getChartSize(chartRef) {
@@ -36,23 +58,17 @@ export default class MultiBarChartDemo extends Component {
       : chartRect.width;
   }
 
-  _mobileRespond(windowWidth) {
-    return (windowWidth >= 720) 
-    ? 'vertical'
-    : 'horizontal';
-  }
-
   _onWindowResize() {
     this.setState({ 
-      layout: this._mobileRespond(window.innerWidth),
       chartSize: this._getChartSize(this.refs.chartContainer.refs.barChart)
     });
   }
 
+  _onIndexUpdate(index) {
+    this.setState({ activeIndex: index });
+  }
+
   render() {
-    // This axis rotates differently than the rest
-    // of the charts. Todo: define vertical/horizontal
-    // label ordering.
     let axisLabel = (this.state.layout === 'vertical') ? [
       {position: 1, value: '75'},
       {position: 2, value: '50'}
@@ -61,15 +77,18 @@ export default class MultiBarChartDemo extends Component {
       {position: 3, value: '50'}
     ];
 
+    let classes = classnames([
+      CLASS_ROOT,
+      {
+        [`${CLASS_ROOT}--active`] : this.state.activeIndex !== null
+      }
+    ]);
+
     return (
-      <div className="chart-demo-bar-multi">
+      <div className={classes}>
         <Box direction="row" justify="center">
-          <Axis label = {axisLabel}
-            layout={this.state.layout}
-            textPadding={30}
-            align='top'
-            distance={this.state.chartSize}
-            count={4} />
+          <Axis label = {axisLabel} layout={this.state.layout} textPadding={30}
+            textAlign={{x:"top"}} distance={this.state.chartSize} count={4} />
           <BarChartDemo title="Play Video Games" ref="chartContainer"
             series={[
               {
@@ -90,7 +109,7 @@ export default class MultiBarChartDemo extends Component {
                 units: '%',
                 value: 25
               }
-            ]} />
+            ]} onIndexUpdate={this._onIndexUpdate} />
           <BarChartDemo title="Download Music of Video"
             series={[
               {
@@ -111,7 +130,7 @@ export default class MultiBarChartDemo extends Component {
                 units: '%',
                 value: 30
               }
-            ]} />
+            ]} onIndexUpdate={this._onIndexUpdate} />
           <BarChartDemo title="Use Social Media"
             series={[
               {
@@ -132,7 +151,7 @@ export default class MultiBarChartDemo extends Component {
                 units: '%',
                 value: 40
               }
-            ]} />
+            ]} onIndexUpdate={this._onIndexUpdate} />
         </Box>
         <Legend series={[
           {

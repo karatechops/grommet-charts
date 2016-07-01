@@ -22,13 +22,11 @@
 	.grommetux-meter__value { display: none; }
 
 	.grommetux-meter__tracks {
-		display: inline;
-		opacity: 0.3;
-
-		path { stroke-width: 4px; }
+		display: none;
 	}
 
 	.grommetux-meter__labels text { fill: #fff; }
+
 	.grommetux-meter__slice {
 		stroke-width: 8px;
 		&.color-index-unset { stroke: rgba(255, 255, 255, 0); }
@@ -48,7 +46,9 @@
 
 	.grommetux-meter--active {
 		path:not(.grommetux-meter__slice--active),
-		text:not(.grommetux-meter__label--active) { opacity: 0.5; }
+		text:not(.grommetux-meter__label--active) {
+			opacity: 0.5;
+		}
 	}
 
 	.grommetux-meter__values .grommetux-meter__slice {
@@ -87,10 +87,15 @@
 
 	.grommetux-meter--bar .grommetux-meter__values .grommetux-meter__slice {
     transition: stroke-width 0.2s;
+    stroke-width: 14px;
     // Turn these off to animate whole container, this avoids
     // stacked segments drawn seperately.
     -webkit-animation: none;
     animation: none;
+
+    &.grommetux-meter__slice--active {
+    	stroke-width: 18px;
+    }
 	}
 
 	.grommetux-meter--vertical .grommetux-meter__value-container {
@@ -110,8 +115,7 @@
 	.grommetux-meter--active {
 		path:not(.grommetux-meter__slice--active) {
 			opacity: 0.5;
+			stroke-width: 8px;
 		}
-
-		.grommetux-meter__slice--active { stroke-width: 15px; }
 	}
 }

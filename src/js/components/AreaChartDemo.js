@@ -67,12 +67,7 @@ export default class AreaChartDemo extends Component {
   }
 
   _onIndexUpdate(index) {
-    //console.log('heyo!');
-    // For single series charts only.
-    /*console.log(this.props.series[0].values[index]);
-    console.log(this.props.series[0].axisValues[index]);
-    console.log(this.props.series[0].units);
-    console.log(this.props.series[0].axisValuesUnits);*/
+    // Todo: adjust text here, remove from _updateChartLabel.
   }
 
   _onWindowResize() {
@@ -103,12 +98,18 @@ export default class AreaChartDemo extends Component {
     if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') 
       top = Number(target.getAttribute('y')) - (labelRect.height - 6);
 
+    let targetIndex = Number(target.getAttribute('data-index'));
+    let value = this.props.series[0].values[targetIndex];
+    let axisValue = this.props.series[0].axisValues[targetIndex];
+    let units = this.props.series[0].units;
+    let axisUnits = this.props.series[0].axisValuesUnits;
+
     this.setState({
       chartLabel: {
-        value: target.getAttribute('data-value'),
-        axisValue: target.getAttribute('data-axis-value'),
-        units: target.getAttribute('data-units'),
-        axisUnits: target.getAttribute('data-axis-units'),
+        value: value,
+        axisValue: axisValue,
+        units: units,
+        axisUnits: axisUnits,
         top: top,
         left: left,
         visible: true

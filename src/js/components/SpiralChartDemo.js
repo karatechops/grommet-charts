@@ -4,7 +4,8 @@ import Meter from './Meter';
 import Heading from 'grommet/components/Heading';
 import Box from 'grommet/components/Box';
 
-const seriesValues = [25, 50, 75];
+const seriesValues = [4.6, 10.2, 22.5];
+const units = 'M';
 
 export default class SpiralChartDemo extends Component {
   constructor() {
@@ -16,7 +17,7 @@ export default class SpiralChartDemo extends Component {
     this.state = {
       chartLabel: {
         visible: false,
-        units: '%',
+        units: units,
         value: 0
       },
       activeIndex: null
@@ -30,7 +31,7 @@ export default class SpiralChartDemo extends Component {
       this.setState({
         chartLabel: {
           visible: true,
-          units: '%',
+          units: units,
           value: value
         },
         activeIndex: index
@@ -42,7 +43,7 @@ export default class SpiralChartDemo extends Component {
     this.setState({
       chartLabel: {
         visible: false,
-        units: '%',
+        units: units,
         value: this.state.chartLabel.value
       },
       activeIndex: null
@@ -77,7 +78,7 @@ export default class SpiralChartDemo extends Component {
               "colorIndex": "graph-2"},
             {"label": "Millennials", "value": seriesValues[2],
               "colorIndex": "graph-3"}
-          ]} max={100} onIndexUpdate={this._onIndexUpdate} important={this.state.activeIndex}
+          ]} max={22.5} onIndexUpdate={this._onIndexUpdate} important={this.state.activeIndex}
           a11yTitleId="meter-title-17" a11yDescId="meter-desc-17" />
           {chartLabel}
         </Box>

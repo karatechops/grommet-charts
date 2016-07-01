@@ -126,21 +126,15 @@ export default class LayeredAreaChart extends Component {
 
     let axisX = (
       <Axis 
-        label={axisXLabels}
-        layout="horizontal"
-        textPadding={30}
-        align="top"
-        distance={this.state.chart.width}
+        label={axisXLabels} layout="horizontal" textAlign={{x:'bottom'}}
+        textPadding={30} align="top" distance={this.state.chart.width}
         count={5} />
     );
 
     let axisY = (
       <Axis 
-        label={axisYLabels}
-        layout="vertical"
-        textPadding={45}
-        align="top"
-        distance={this.state.chart.height}
+        label={axisYLabels} layout="vertical" textAlign={{y:'left'}}
+        textPadding={45} align="top" distance={this.state.chart.height}
         count={5} />
     );
 
