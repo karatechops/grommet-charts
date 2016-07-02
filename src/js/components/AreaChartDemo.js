@@ -1,17 +1,17 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+
 import classnames from 'classnames';
+
 import Box from 'grommet/components/Box';
 import Heading from 'grommet/components/Heading';
-import Area from './Chart/Area';
-import Summary from './Chart/Summary';
-import Axis from './Chart/Axis';
+import Chart from './chart/Chart';
+import Summary from './chart/Summary';
+import Axis from './chart/Axis';
 
 export default class AreaChartDemo extends Component {
   constructor(props) {
     super(props);
 
-    this._onClick = this._onClick.bind(this);
     this._onMouseOver = this._onMouseOver.bind(this);
     this._onMouseOut = this._onMouseOut.bind(this);
     this._onIndexUpdate = this._onIndexUpdate.bind(this);
@@ -21,6 +21,7 @@ export default class AreaChartDemo extends Component {
     window.addEventListener('resize', this._onWindowResize);
     this.state = {
       chartLabel: {
+        activeIndex: null,
         value: '0',
         axisValue: '0',
         units: ' ',
@@ -41,21 +42,20 @@ export default class AreaChartDemo extends Component {
     window.removeEventListener('resize', this._onWindowResize);
   }
 
-  _onClick(event) {
-    let target = event.target;
-    let targetNodeRect = ReactDOM.findDOMNode(target).getBoundingClientRect();
-    this._updateChartLabel(event, targetNodeRect);
-  }
-
   _onMouseOver(event) {
-    let target = event.target;
-    let targetNodeRect = ReactDOM.findDOMNode(target).getBoundingClientRect();
-    this._updateChartLabel(target, targetNodeRect);
+    if (!this.state.chartLabel.visible)
+      this.setState({
+        chartLabel: {
+          ...this.state.chartLabel,
+          visible: true
+        }
+      });
   }
 
   _onMouseOut(event) {
     this.setState({
       chartLabel: {
+        activeIndex: null,
         value: this.state.chartLabel.value,
         axisValue: this.state.chartLabel.axisValue,
         units: this.state.chartLabel.units,
@@ -67,7 +67,17 @@ export default class AreaChartDemo extends Component {
   }
 
   _onIndexUpdate(index) {
-    // Todo: adjust text here, remove from _updateChartLabel.
+    if (this.state.chartLabel.visible) {
+      let values = {
+        activeIndex: index,
+        value: this.props.series[0].values[index],
+        axisValue: this.props.series[0].axisValues[index],
+        units: this.props.series[0].units,
+        axisUnits: this.props.series[0].axisValuesUnits
+      };
+
+      this._updateLabelPos(index, values);
+    }
   }
 
   _onWindowResize() {
@@ -83,36 +93,31 @@ export default class AreaChartDemo extends Component {
     });
   }
 
-  _updateChartLabel(target, targetRect) {
+  _updateLabelPos(index, values) {
+    let chart = this.refs.chartComponent.refs.chart;
+    let chartRect =  chart.getBoundingClientRect();
+    let valuesLength = this.props.series[0].values.length - 1;
+
     let top = (this.state.layout === 'horizontal') 
-      ?  targetRect.height + 40 // add Axis height.
-      : Number(target.getAttribute('y')) + (targetRect.height /2) + 1;
+      ? chartRect.height + 40 // add Axis height.
+      : Math.round(index * (chartRect.height / valuesLength)) + 1;
 
     let left = (this.state.layout === 'horizontal')
-      ? Number(target.getAttribute('x')) + 1
+      ? 0
       : 0;
 
     // Demo purposes, adjust for dynamic placement.
     let labelRect = this.refs.chartLabel.getBoundingClientRect();
 
-    if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') 
-      top = Number(target.getAttribute('y')) - (labelRect.height - 6);
-
-    let targetIndex = Number(target.getAttribute('data-index'));
-    let value = this.props.series[0].values[targetIndex];
-    let axisValue = this.props.series[0].axisValues[targetIndex];
-    let units = this.props.series[0].units;
-    let axisUnits = this.props.series[0].axisValuesUnits;
+    if (index >= 10 && this.state.layout === 'vertical') 
+      top = Math.round(index * (chartRect.height / valuesLength)) - (labelRect.height + 2);
 
     this.setState({
       chartLabel: {
-        value: value,
-        axisValue: axisValue,
-        units: units,
-        axisUnits: axisUnits,
         top: top,
         left: left,
-        visible: true
+        visible: true,
+        ...values
       }
     });
   }
@@ -136,7 +141,6 @@ export default class AreaChartDemo extends Component {
     ]);
     let chartLabelStyle = {
       top: this.state.chartLabel.top
-      // Todo: add left positioning. 
     };
 
     let chartLabel = (
@@ -145,7 +149,8 @@ export default class AreaChartDemo extends Component {
           {this.state.chartLabel.axisValue} {this.state.chartLabel.axisUnits}
         </Heading>
         <Heading strong={true} tag="h2">
-          {this.state.chartLabel.value}<span className={`charts-label__unit`}>{this.state.chartLabel.units}</span>
+          {this.state.chartLabel.value}
+          <span className={`charts-label__unit`}>{this.state.chartLabel.units}</span>
         </Heading>
       </div>
     );
@@ -182,14 +187,13 @@ export default class AreaChartDemo extends Component {
             <div className="chart-demo__container" style={{position:'relative'}}>
               <div style={{position:'relative'}}>
                 {chartLabel}
-                <Area series={this.props.series}
+                <Chart series={this.props.series}
                   orientation={this.state.layout}
-                  onClick={this._onClick}
                   onMouseOver={this._onMouseOver}
                   onMouseOut={this._onMouseOut}
                   onResize={this._onChartResize}
                   onIndexUpdate={this._onIndexUpdate}
-                  min={2.5}
+                  min={2.5} type="area" ref="chartComponent"
                   a11yTitleId="areaClickableChartTitle" a11yDescId="areaClickableChartDesc" />
               </div>
               {axis}

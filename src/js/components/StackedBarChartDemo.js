@@ -8,7 +8,7 @@ import Legend from 'grommet/components/Legend';
 import Heading from 'grommet/components/Heading';
 import Box from 'grommet/components/Box';
 import BarChartDemo from './BarChartDemo';
-import Axis from './Chart/Axis';
+import Axis from './chart/Axis';
 
 const CHART_SERIES = [
   {

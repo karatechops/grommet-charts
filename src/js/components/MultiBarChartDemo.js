@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import Legend from 'grommet/components/Legend';
 import Box from 'grommet/components/Box';
 import BarChartDemo from './BarChartDemo';
-import Axis from './Chart/Axis';
+import Axis from './chart/Axis';
 
 const CLASS_ROOT = 'chart-demo-bar-multi';
 

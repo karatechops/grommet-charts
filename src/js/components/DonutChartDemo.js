@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Responsive from 'grommet/utils/Responsive';
 
-import Meter from './Meter';
+import Meter from './meter/Meter';
 
 export default class DonutChartDemo extends Component {
   constructor() {

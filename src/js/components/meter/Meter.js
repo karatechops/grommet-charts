@@ -4,8 +4,9 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 
 import Responsive from 'grommet/utils/Responsive';
+
 import Legend from 'grommet/components/Legend';
-import Bar from './meter/Bar';
+import Bar from './Bar';
 import Spiral from 'grommet/components/meter/Spiral';
 import Circle from 'grommet/components/meter/Circle';
 import Arc from 'grommet/components/meter/Arc';

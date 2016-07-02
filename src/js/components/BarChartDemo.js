@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
+
 import classnames from 'classnames';
-import Meter from './Meter';
+
+import Meter from './meter/Meter';
 import Heading from 'grommet/components/Heading';
 import Box from 'grommet/components/Box';
 

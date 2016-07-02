@@ -226,8 +226,10 @@ export default {
   },
 
   _getValueString(series, index) {
-    let string = series.map((singleSeries)=>{
-      return(`${singleSeries.label}: ${singleSeries.values[index]}${singleSeries.units} `);
+    let string = series.map((singleSeries, seriesIndex)=>{
+      let seriesString = `${singleSeries.label}: ${singleSeries.values[index]}${singleSeries.units}`;
+      if (series.length > 0) seriesString = `${seriesString} `;
+      return seriesString;
     });
 
     return string;
@@ -425,9 +427,11 @@ export default {
       <line fill="none" x1={x1} y1={y1} x2={x2} y2={y2} />
     );
 
-    let pointColorIndex = colorIndex;
-
     let pointPaths = activeIndexCoords.map((coordSet, index) => {
+      let pointColorIndex = (series[index].pointColorIndex) 
+        ? series[index].pointColorIndex
+        : colorIndex;
+
       let point = (
           <circle key={`circle-${index}`}
           className={`${CLASS_ROOT}__cursor-point grommetux-color-index-${pointColorIndex}`}

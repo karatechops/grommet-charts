@@ -9,11 +9,12 @@ const CLASS_ROOT = "infographic-chart";
 
 const POINT_RADIUS = 4;
 
-export default class Line extends Component {
+export default class Chart extends Component {
 
   constructor(props) {
     super(props);
 
+    this._onKeyboard = this._onKeyboard.bind(this);
     this._onMouseOver = this._onMouseOver.bind(this);
     this._onMouseOut = this._onMouseOut.bind(this);
     this._onClick = this._onClick.bind(this);
@@ -30,11 +31,12 @@ export default class Line extends Component {
 
   componentDidMount () {
     window.addEventListener('resize', this._onResize);
+
     this._keyboardHandlers = {
-      left: () => this._decrementActiveIndex(this.state.activeIndex),
-      up: () => this._decrementActiveIndex(this.state.activeIndex),
-      right: () => this._incrementActiveIndex(this.state.activeIndex),
-      down: () => this._incrementActiveIndex(this.state.activeIndex)
+      left: () => this._onKeyboard(event, this.state.activeIndex, 'left'),
+      up: () => this._onKeyboard(event, this.state.activeIndex, 'up'),
+      right: () => this._onKeyboard(event, this.state.activeIndex, 'right'),
+      down: () => this._onKeyboard(event, this.state.activeIndex, 'down')
     };
 
     KeyboardAccelerators.startListeningToKeyboard(
@@ -45,6 +47,8 @@ export default class Line extends Component {
 
   componentDidUpdate (prevProps, prevState) {
     this._layout();
+    if(this.state.orientation !== prevState.orientation)
+      this._updateKeyboardHandlers(this.state.orientation);
     if (prevState.activeIndex !== this.state.activeIndex && this.props.onIndexUpdate)
       this.props.onIndexUpdate(this.state.activeIndex);
   }
@@ -77,24 +81,24 @@ export default class Line extends Component {
   }
 
   _onMouseOver (event) {
-    this.props.onMouseOver(event);
+    if(this.props.onMouseOver) this.props.onMouseOver(event);
     this.setState({
-      activeIndex: event.target.getAttribute('data-index'),
+      activeIndex: Number(event.target.getAttribute('data-index')),
       active: true
     });
   }
 
   _onClick (event) {
-    this.props.onClick(event);
+    if(this.props.onClick) this.props.onClick(event);
     this.setState({
-      activeIndex: event.target.getAttribute('data-index'),
+      activeIndex: Number(event.target.getAttribute('data-index')),
       active: true
     });
   }
 
   _onMouseOut (event) {
     // Remove highlighted index.
-    this.props.onMouseOut(event);
+    if(this.props.onMouseOut) this.props.onMouseOut(event);
     this.setState({
       active: false
     });
@@ -107,7 +111,7 @@ export default class Line extends Component {
   }
 
   _incrementActiveIndex(index) {
-    if (index < this.props.series[0].values.length - 1) {
+    if (index < this.props.series[0].values.length - 1 && index >= 0) {
       this.setState({ 
         activeIndex: Number(index) + 1 
       });
@@ -119,6 +123,32 @@ export default class Line extends Component {
       this.setState({ 
         activeIndex: Number(index) - 1 
       });
+    }
+  }
+
+  _onKeyboard(event, index, key) {
+    event.preventDefault();
+    switch(key) {
+      case 'left':
+        this._decrementActiveIndex(index);
+        break;
+      case 'right':
+        this._incrementActiveIndex(index);
+        break;
+      case 'up':
+        if (this.props.orientation === 'vertical') {
+          this._decrementActiveIndex(index);
+        } else {
+          this._incrementActiveIndex(index);
+        }
+        break;
+      case 'down':
+        if (this.props.orientation === 'vertical') {
+          this._incrementActiveIndex(index);
+        } else {
+          this._decrementActiveIndex(index);
+        }
+        break;
     }
   }
 
@@ -173,8 +203,16 @@ export default class Line extends Component {
       }
     ]);
 
-    let area = utils.getLinePaths(this.state.bounds, this.props);
-    let areaGroup = (<g className={`${CLASS_ROOT}__area`}>{area}</g>);
+    let chartPaths;
+    switch (this.props.type) {
+      case 'area':
+        chartPaths = utils.getAreaPaths(this.state.bounds, this.props);
+        break;
+      case 'line':
+        chartPaths = utils.getLinePaths(this.state.bounds, this.props);
+        break;
+    }
+    let chartGroup = (<g className={`${CLASS_ROOT}__area`}>{chartPaths}</g>);
 
     let points = (this.props.points) 
       ? utils.getPointPaths(this.state.bounds, this.props, POINT_RADIUS)
@@ -220,7 +258,7 @@ export default class Line extends Component {
           aria-labelledby={this.props.a11yTitleId + ' ' + this.props.a11yDescId} >
           {a11yTitleNode}
           {a11yDescNode}
-          <g className={`${CLASS_ROOT}__values`}>{areaGroup}{pointGroup}</g>
+          <g className={`${CLASS_ROOT}__values`}>{chartGroup}{pointGroup}</g>
           <g>{cursor}</g>
           <g className={`${CLASS_ROOT}__hotspots`}>{rectangleHotspots}</g>
         </svg>
@@ -230,7 +268,7 @@ export default class Line extends Component {
 
 }
 
-Line.propTypes = {
+Chart.propTypes = {
   a11yTitle: PropTypes.string,
   a11yTitleId: PropTypes.string,
   a11yDescId: PropTypes.string,
@@ -262,19 +300,21 @@ Line.propTypes = {
     })
   ).isRequired,
   size: PropTypes.oneOf(['small', 'medium', 'large']),
-  smooth: PropTypes.bool
+  smooth: PropTypes.bool,
+  type: PropTypes.oneOf(['line', 'area'])
 };
 
-Line.contextTypes = {
+Chart.contextTypes = {
   intl: PropTypes.object
 };
 
-Line.defaultProps = {
+Chart.defaultProps = {
   a11yTitleId: 'chart-title',
   a11yDescId: 'chart-desc',
   defaultHeight: 192,
   defaultWidth: 392,
   min: 0,
   orientation: 'horizontal',
-  pointsRadius: 3
+  pointsRadius: 3,
+  type: 'line'
 };

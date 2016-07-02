@@ -1,16 +1,17 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+
 import classnames from 'classnames';
+
 import Box from 'grommet/components/Box';
 import Heading from 'grommet/components/Heading';
-import Line from './Chart/Line';
-import Axis from './Chart/Axis';
+import Chart from './chart/Chart';
+import Axis from './chart/Axis';
 
 export default class LineChartDemo extends Component {
   constructor(props) {
     super(props);
 
-    this._onClick = this._onClick.bind(this);
+    this._onIndexUpdate = this._onIndexUpdate.bind(this);
     this._onMouseOver = this._onMouseOver.bind(this);
     this._onMouseOut = this._onMouseOut.bind(this);
     this._onWindowResize = this._onWindowResize.bind(this);
@@ -19,6 +20,7 @@ export default class LineChartDemo extends Component {
     window.addEventListener('resize', this._onWindowResize);
     this.state = {
       chartLabel: {
+        activeIndex: null,
         value: '0',
         axisValue: '0',
         units: '',
@@ -39,30 +41,38 @@ export default class LineChartDemo extends Component {
     window.removeEventListener('resize', this._onWindowResize);
   }
 
-  _onClick(event) {
-    let target = event.target;
-    let targetNodeRect = ReactDOM.findDOMNode(target).getBoundingClientRect();
-    this._updateChartLabel(event, targetNodeRect);
-  }
-
   _onMouseOver(event) {
-    let target = event.target;
-    let targetNodeRect = ReactDOM.findDOMNode(target).getBoundingClientRect();
-    this._updateChartLabel(target, targetNodeRect);
+    if (!this.state.chartLabel.visible)
+      this.setState({
+        chartLabel: {
+          ...this.state.chartLabel,
+          visible: true
+        }
+      });
   }
 
   _onMouseOut(event) {
     this.setState({
       chartLabel: {
-        value: this.state.chartLabel.value,
-        axisValue: this.state.chartLabel.axisValue,
-        units: this.state.chartLabel.units,
-        axisUnits: this.state.chartLabel.axisUnits,
-        top: this.state.chartLabel.top,
-        left: this.state.chartLabel.left,
+        ...this.state.chartLabel,
+        activeIndex: null,
         visible: false
       }
     });
+  }
+
+  _onIndexUpdate(index) {
+    if (this.state.chartLabel.visible) {
+      let values = {
+        activeIndex: index,
+        value: this.props.series[0].values[index],
+        axisValue: this.props.series[0].axisValues[index],
+        units: this.props.series[0].units,
+        axisUnits: this.props.series[0].axisValuesUnits
+      };
+
+      this._updateLabelPos(index, values);
+    }
   }
 
   _onWindowResize() {
@@ -78,41 +88,32 @@ export default class LineChartDemo extends Component {
     });
   }
 
-  _updateChartLabel(target, targetRect) {
-    let chartLabelRect = this.refs.chartLabel.getBoundingClientRect();
+  _updateLabelPos(index, values) {
+    let chart = this.refs.chartComponent.refs.chart;
+    let chartRect =  chart.getBoundingClientRect();
+    let labelRect = this.refs.chartLabel.getBoundingClientRect();
+    let valuesLength = this.props.series[0].values.length - 1;
 
     let top = (this.state.layout === 'horizontal') 
-      ? targetRect.height - chartLabelRect.height // add Axis height.
-      : Number(target.getAttribute('y')) + (targetRect.height / 2) + 1;
+      ? chartRect.height - labelRect.height
+      : Math.round(index * (chartRect.height / valuesLength)) + 1;
 
-    let left = (this.state.layout === 'horizontal') 
-      ? Number(target.getAttribute('x')) + 1 + (targetRect.width / 2)
+    let left = (this.state.layout === 'horizontal')
+      ? Math.round(index * (chartRect.width / valuesLength)) + 1
       : 0;
 
     // Demo purposes, adjust for dynamic placement.
-    if (target.getAttribute('data-index') >= 10 && this.state.layout === 'vertical') 
-      top = Number(target.getAttribute('y')) - (chartLabelRect.height - 6);
-
-    if (target.getAttribute('data-index') >= 10 && this.state.layout === 'horizontal') 
-      left = Number(target.getAttribute('x') - 2); // Subtract line width of cursor.
-
-    if (target.getAttribute('data-index') == 0) left = 2;
-
-    let targetIndex = Number(target.getAttribute('data-index'));
-    let value = this.props.series[0].values[targetIndex];
-    let axisValue = this.props.series[0].axisValues[targetIndex];
-    let units = this.props.series[0].units;
-    let axisUnits = this.props.series[0].axisValuesUnits;
+    if (index >= 10 && this.state.layout === 'horizontal')
+      left = left - (labelRect.width + 2);
+    if (index >=10 && this.state.layout === 'vertical')
+      top = top - (labelRect.height + 2);
 
     this.setState({
       chartLabel: {
-        value: value,
-        axisValue: axisValue,
-        units: units,
-        axisUnits: axisUnits,
         top: top,
         left: left,
-        visible: true
+        visible: true,
+        ...values
       }
     });
   }
@@ -165,14 +166,14 @@ export default class LineChartDemo extends Component {
           <Box direction="column">
             <div className="chart-demo__container">
               <div style={{position:'relative', width:'100%'}}>
-                <Line series={this.props.series}
+                <Chart series={this.props.series}
                   orientation={this.state.layout}
                   onClick={this._onClick}
                   onMouseOver={this._onMouseOver}
                   onMouseOut={this._onMouseOut}
                   onResize={this._onChartResize}
-                  min={62}
-                  points={true}
+                  min={62} onIndexUpdate={this._onIndexUpdate}
+                  points={true} type="line" ref="chartComponent"
                   a11yTitleId="lineClickableChartTitle" a11yDescId="lineClickableChartDesc" />
                 {chartLabel}
               </div>
@@ -189,6 +190,7 @@ LineChartDemo.PropTypes = {
   series: PropTypes.arrayOf(
     PropTypes.shape({
       colorIndex: PropTypes.string,
+      pointColorIndex: PropTypes.string,
       onClick: PropTypes.func,
       label: PropTypes.string,
       units: PropTypes.string,

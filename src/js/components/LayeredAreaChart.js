@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-//import ReactDOM from 'react-dom';
-//import classnames from 'classnames';
+
 import Box from 'grommet/components/Box';
-//import Heading from 'grommet/components/Heading';
 import Legend from 'grommet/components/Legend';
-import Area from './Chart/Area';
-import Axis from './Chart/Axis';
+import Chart from './chart/Chart';
+import Axis from './chart/Axis';
 
 const CHART_SERIES = [
   {
@@ -159,14 +157,14 @@ export default class LayeredAreaChart extends Component {
             <div className="chart-demo__container" style={{position:'relative'}}>
               <Box direction="row" responsive={false}>
                 {axisY}
-                <Area series={CHART_SERIES}
+                <Chart series={CHART_SERIES}
                   orientation={this.state.layout}
                   onClick={this._onClick}
                   onMouseOver={this._onMouseOver}
                   onMouseOut={this._onMouseOut}
                   onResize={this._onChartResize}
                   onIndexUpdate={this._onIndexUpdate}
-                  min={50} max={100}
+                  min={50} max={100} type="area"
                   a11yTitleId="LayeredAreaChart" a11yDescId="LayeredAreaChartDesc" />
               </Box>
               {axisX}

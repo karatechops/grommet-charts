@@ -35,6 +35,33 @@ export default class Home extends Component {
         <HomeSection primary={true} colorIndex="neutral-1">
           <div className="tabs-container">
             <Tabs>
+              <Tab title="Line Chart">
+                <Headline>Line Chart</Headline>
+                  <LineChartDemo series={[
+                    {
+                      label: "Less Money to Spend",
+                      values: [69, 69, 68, 67, 66, 65, 66, 66, 
+                        66, 64, 64, 63, 64],
+                      units: "%",
+                      axisValues: [2000, 2001, 2002, 2003, 2004, 2005, 2006, 
+                        2007, 2008, 2009, 2010, 2011, 2012],
+                      colorIndex: "graph-3",
+                      pointColorIndex: "graph-2",
+                      axisValuesUnits: ""
+                    }]}
+                  axis={{
+                    label: [
+                      {position: 1, value: '2000'},
+                      {position: 3, value: '2002'},
+                      {position: 5, value: '2004'},
+                      {position: 7, value: '2006'},
+                      {position: 9, value: '2008'},
+                      {position: 11, value: '2010'},
+                      {position: 13, value: '2012'}
+                    ],
+                    count: 13
+                  }} />
+              </Tab>
               <Tab title="Multi Area Chart">
                 <Headline>Multi Area Chart</Headline>
                 <Box direction="row" justify="between">
@@ -97,32 +124,6 @@ export default class Home extends Component {
               <Tab title="Stacked Bar Chart">
                 <Headline>Stacked Bar Chart</Headline>
                 <StackedBarChartDemo />
-              </Tab>
-              <Tab title="Line Chart">
-                <Headline>Line Chart</Headline>
-                  <LineChartDemo series={[
-                    {
-                      label: "Less Money to Spend",
-                      values: [69, 69, 68, 67, 66, 65, 66, 66, 
-                        66, 64, 64, 63, 64],
-                      units: "%",
-                      axisValues: [2000, 2001, 2002, 2003, 2004, 2005, 2006, 
-                        2007, 2008, 2009, 2010, 2011, 2012],
-                      colorIndex: "graph-3",
-                      axisValuesUnits: ""
-                    }]}
-                  axis={{
-                    label: [
-                      {position: 1, value: '2000'},
-                      {position: 3, value: '2002'},
-                      {position: 5, value: '2004'},
-                      {position: 7, value: '2006'},
-                      {position: 9, value: '2008'},
-                      {position: 11, value: '2010'},
-                      {position: 13, value: '2012'}
-                    ],
-                    count: 13
-                  }} />
               </Tab>
               <Tab title="Spiral Chart">
                 <Headline>Spiral Chart</Headline>
